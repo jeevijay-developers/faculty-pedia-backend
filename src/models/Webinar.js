@@ -1,0 +1,87 @@
+const mongoose = require("mongoose");
+
+const webinarSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      lowecase: true,
+      unique: true,
+    },
+    description: {
+      short: {
+        type: String,
+        required: true,
+      },
+      long: {
+        type: String,
+        required: true,
+      },
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    webinarType: {
+      type: String,
+      required: true,
+      enum: ["OTO", "OTA"],
+      default: "OTA",
+    },
+    time: {
+      type: String,
+      required: true,
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
+    seatLimit: {
+      type: Number,
+      required: true,
+      default: 1,
+    },
+    duration: {
+      // in minutes
+      type: Number,
+      required: true,
+    },
+    fees: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    image: {
+      public_id: String,
+      url: String,
+    },
+    teacherId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Educator",
+      required: true,
+    },
+    enrolledStudents: [
+      {
+        studentId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Student",
+        },
+      },
+    ],
+    webinarLink: {
+      type: String,
+    },
+    assetsLinks: [
+      {
+        name: { type: String, enum: ["PPT", "VIDEO", "PDF"] },
+        link: { type: String },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = mongoose.model("Webinar", webinarSchema);
