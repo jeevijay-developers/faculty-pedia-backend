@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const educatorSchema = new mongoose.Schema(
   {
@@ -18,7 +19,7 @@ const educatorSchema = new mongoose.Schema(
     },
     mobileNumber: {
       type: String,
-      required: truel,
+      required: true,
       unique: true,
       trim: true,
     },
@@ -80,8 +81,8 @@ const educatorSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      enum: ["IIT-JEE", "NEET", "CBSE"],
-      default: "IIT-JEE",
+      enum: ["Physics", "Chemistry", "Biology", "Mathematics", "IIT-JEE", "NEET", "CBSE"],
+      default: "Physics",
     },
     coursesAndTests: [
       {
@@ -97,6 +98,14 @@ const educatorSchema = new mongoose.Schema(
         ref: "Webinar",
       },
     ],
+    followers: {
+      type: String,
+      default: "0",
+    },
+    yearsExperience: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
