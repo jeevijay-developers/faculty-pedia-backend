@@ -84,10 +84,16 @@ const courseSchema = new mongoose.Schema(
         type: String,
       },
     },
-    classess: [
+    classes: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "LiveClass",
+      },
+    ],
+    tests: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "LiveTestSeries",
       },
     ],
   },

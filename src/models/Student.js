@@ -33,6 +33,10 @@ const studentSchema = new mongoose.Schema({
       ref: "Course",
     },
   ],
+  followingEducators: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Educator" },
+  ],
+
   tests: [
     {
       liveTestId: {

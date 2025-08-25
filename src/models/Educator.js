@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const bcrypt = require("bcrypt");
 const educatorSchema = new mongoose.Schema(
   {
     firstName: {
@@ -18,7 +18,7 @@ const educatorSchema = new mongoose.Schema(
     },
     mobileNumber: {
       type: String,
-      required: truel,
+      required: true,
       unique: true,
       trim: true,
     },
@@ -32,6 +32,7 @@ const educatorSchema = new mongoose.Schema(
       public_id: String,
       url: String,
     },
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Student" }],
     bio: {
       type: String,
       required: true,
@@ -41,7 +42,7 @@ const educatorSchema = new mongoose.Schema(
       {
         title: {
           type: String,
-          upperCase: true,
+          uppercase: true,
         },
         company: String,
         startDate: Date,
@@ -53,7 +54,7 @@ const educatorSchema = new mongoose.Schema(
       {
         title: {
           type: String,
-          upperCase: true,
+          uppercase: true,
         },
         institute: String,
         startDate: Date,
@@ -61,11 +62,11 @@ const educatorSchema = new mongoose.Schema(
       },
     ],
     socials: {
-      instagram: String,
-      facebook: String,
-      twitter: String,
-      linkedin: String,
-      youtube: String,
+      instagram: { type: String, default: "" },
+      facebook: { type: String, default: "" },
+      twitter: { type: String, default: "" },
+      linkedin: { type: String, default: "" },
+      youtube: { type: String, default: "" },
     },
     status: {
       type: String,
@@ -83,18 +84,22 @@ const educatorSchema = new mongoose.Schema(
       enum: ["IIT-JEE", "NEET", "CBSE"],
       default: "IIT-JEE",
     },
-    coursesAndTests: [
+    courses: [
       {
-        type: String,
-        enum: ["COURSE", "TEST"],
-        default: "COURSE",
-        id: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "LiveCourse",
       },
     ],
     webinars: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Webinar",
+      },
+    ],
+    testSeries: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "TestSeries",
       },
     ],
   },
