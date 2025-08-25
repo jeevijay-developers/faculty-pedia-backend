@@ -19,6 +19,7 @@ const educatorSchema = new mongoose.Schema(
     mobileNumber: {
       type: String,
       required: true,
+      required: true,
       unique: true,
       trim: true,
     },
@@ -81,8 +82,16 @@ const educatorSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      enum: ["IIT-JEE", "NEET", "CBSE"],
-      default: "IIT-JEE",
+      enum: [
+        "Physics",
+        "Chemistry",
+        "Biology",
+        "Mathematics",
+        "IIT-JEE",
+        "NEET",
+        "CBSE",
+      ],
+      default: "Physics",
     },
     courses: [
       {
@@ -102,6 +111,14 @@ const educatorSchema = new mongoose.Schema(
         ref: "TestSeries",
       },
     ],
+    followers: {
+      type: String,
+      default: "0",
+    },
+    yearsExperience: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
