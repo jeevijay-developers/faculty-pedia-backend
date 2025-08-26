@@ -6,7 +6,7 @@ const webinarSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      lowecase: true,
+      lowercase: true,
       unique: true,
     },
     description: {
@@ -18,10 +18,6 @@ const webinarSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
-    },
-    price: {
-      type: Number,
-      required: true,
     },
     webinarType: {
       type: String,
@@ -74,7 +70,7 @@ const webinarSchema = new mongoose.Schema(
     },
     assetsLinks: [
       {
-        name: { type: String, enum: ["PPT", "VIDEO", "PDF"] },
+        name: { type: String, enum: ["PPT", "VIDEO", "PDF", "DOC"] },
         link: { type: String },
       },
     ],

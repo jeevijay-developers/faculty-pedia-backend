@@ -1,5 +1,6 @@
 const Educator = require("../models/Educator");
 const Student = require("../models/Student");
+const Webinar = require("../models/Webinar");
 exports.validateMobileNumber = async (value) => {
   const mobileNumberPattern = /^\d{10}$/; // Example pattern for a 10-digit number
   if (!mobileNumberPattern.test(value)) {
@@ -30,5 +31,13 @@ exports.validateEmail = async (value) => {
     throw new Error("Email already in use by an educator");
   }
 
+  return true; // ✅ return true when validation passes
+};
+
+exports.validateWebinarTitle = async (value) => {
+  const webinar = await Webinar.findOne({ title: value });
+  if (webinar) {
+    throw new Error("Webinar title already in use");
+  }
   return true; // ✅ return true when validation passes
 };

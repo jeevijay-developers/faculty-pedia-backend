@@ -3,6 +3,9 @@ const express = require("express");
 const APP = express();
 const cors = require("cors");
 const AUTH_ROUTES = require("./routes/auth.routes");
+const FOLLOW_ROUTES = require("./routes/follow.routes");
+const EDUCATOR_ROUTES = require("./routes/educator.routes");
+const WEBINARS_ROUTES = require("./routes/webinar.routes");
 const { connectDB } = require("./helpers/connectDB");
 require("dotenv").config();
 // const
@@ -29,6 +32,9 @@ APP.use(cors(corsOptions));
 APP.use(express.json());
 APP.use(express.urlencoded({ extended: true }));
 APP.use("/api/auth", AUTH_ROUTES);
+APP.use("/api/follow", FOLLOW_ROUTES);
+APP.use("/api/educator", EDUCATOR_ROUTES);
+APP.use("/api/webinars", WEBINARS_ROUTES);
 
 //? env imports
 const PORT = process.env.PORT;

@@ -1,6 +1,7 @@
 const { body } = require("express-validator");
 
 const emailChain = () => body("email").trim().notEmpty().isEmail();
+// const nameChain = () => body("name").trim().notEmpty().isLength({ min: 3, max: 30 });
 const mobileChain = () =>
   body("mobileNumber").trim().notEmpty().isMobilePhone();
 const nameChain = () =>
@@ -41,6 +42,18 @@ const arrayFieldChain = (
     );
 };
 
+const arrayEnumChain = (fieldName, property, allowedValues) => {
+  return body(`${fieldName}.*.${property}`)
+    .trim()
+    .notEmpty()
+    .isIn(allowedValues)
+    .withMessage(
+      `${property} in ${fieldName} must be one of the following values: ${allowedValues.join(
+        ", "
+      )}`
+    );
+};
+
 const dateFieldChain = (fieldName) => {
   return body(fieldName)
     .notEmpty()
@@ -48,6 +61,27 @@ const dateFieldChain = (fieldName) => {
     .isISO8601()
     .withMessage(`${fieldName} must be a valid date (ISO8601 format)`)
     .toDate(); // convert to JS Date object if valid
+};
+
+const numberChain = (fieldName, min = 0) => {
+  return body(fieldName)
+    .notEmpty()
+    .isInt({ min })
+    .withMessage(
+      `${fieldName} must be a valid number greater than or equal to ${min}`
+    );
+};
+
+const enumChain = (fieldName, allowedValues) => {
+  return body(fieldName)
+    .trim()
+    .notEmpty()
+    .isIn(allowedValues)
+    .withMessage(
+      `${fieldName} must be one of the following values: ${allowedValues.join(
+        ", "
+      )}`
+    );
 };
 
 module.exports = {
@@ -58,4 +92,7 @@ module.exports = {
   stringChain,
   arrayFieldChain,
   dateFieldChain,
+  numberChain,
+  enumChain,
+  arrayEnumChain,
 };

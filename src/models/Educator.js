@@ -111,10 +111,12 @@ const educatorSchema = new mongoose.Schema(
         ref: "TestSeries",
       },
     ],
-    followers: {
-      type: String,
-      default: "0",
-    },
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Student",
+      },
+    ],
     yearsExperience: {
       type: Number,
       default: 0,

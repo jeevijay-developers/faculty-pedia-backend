@@ -6,7 +6,7 @@ const liveTestSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      lowecase: true,
+      lowercase: true,
       unique: true,
     },
     description: {
@@ -27,7 +27,7 @@ const liveTestSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      lowecase: true,
+      lowercase: true,
     },
     startDate: {
       type: Date,
