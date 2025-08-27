@@ -6,6 +6,7 @@ const AUTH_ROUTES = require("./routes/auth.routes");
 const FOLLOW_ROUTES = require("./routes/follow.routes");
 const EDUCATOR_ROUTES = require("./routes/educator.routes");
 const WEBINARS_ROUTES = require("./routes/webinar.routes");
+const BLOG_ROUTES = require("./routes/blog.routes");
 const { connectDB } = require("./helpers/connectDB");
 require("dotenv").config();
 // const
@@ -35,6 +36,7 @@ APP.use("/api/auth", AUTH_ROUTES);
 APP.use("/api/follow", FOLLOW_ROUTES);
 APP.use("/api/educator", EDUCATOR_ROUTES);
 APP.use("/api/webinars", WEBINARS_ROUTES);
+APP.use("/api/blog", BLOG_ROUTES);
 
 //? env imports
 const PORT = process.env.PORT;

@@ -2,6 +2,8 @@ const { body } = require("express-validator");
 const {
   signUpStudent,
   signUpEducator,
+  loginStudent,
+  loginEducator,
 } = require("../controllers/AuthController");
 const {
   emailChain,
@@ -57,4 +59,17 @@ router.post(
   signUpEducator
 );
 
+router.post(
+  "/login-student",
+  [emailChain(), passwordChain()],
+  validateRequests,
+  loginStudent
+);
+
+router.post(
+  "/login-educator",
+  [emailChain(), passwordChain()],
+  validateRequests,
+  loginEducator
+);
 module.exports = router;

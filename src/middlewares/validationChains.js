@@ -84,6 +84,21 @@ const enumChain = (fieldName, allowedValues) => {
     );
 };
 
+const mongoIDChain = (fieldName) => {
+  return body(fieldName)
+    .trim()
+    .notEmpty()
+    .isMongoId()
+    .withMessage(`${fieldName} must be a valid MongoDB ObjectId`);
+};
+
+const simpleArrayChain = (fieldName) => {
+  return body(`${fieldName}.*`)
+    .trim()
+    .notEmpty()
+    .withMessage(`Each item in ${fieldName} must be a non-empty string`);
+};
+
 module.exports = {
   emailChain,
   mobileChain,
@@ -95,4 +110,6 @@ module.exports = {
   numberChain,
   enumChain,
   arrayEnumChain,
+  mongoIDChain,
+  simpleArrayChain,
 };

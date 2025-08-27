@@ -1,3 +1,4 @@
+const Blog = require("../models/Blog");
 const Educator = require("../models/Educator");
 const Student = require("../models/Student");
 const Webinar = require("../models/Webinar");
@@ -38,6 +39,14 @@ exports.validateWebinarTitle = async (value) => {
   const webinar = await Webinar.findOne({ title: value });
   if (webinar) {
     throw new Error("Webinar title already in use");
+  }
+  return true; // ✅ return true when validation passes
+};
+
+exports.validateBlogTitle = async (value) => {
+  const blog = await Blog.findOne({ title: value });
+  if (blog) {
+    throw new Error("Blog title already in use");
   }
   return true; // ✅ return true when validation passes
 };

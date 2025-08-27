@@ -50,7 +50,7 @@ const blogSchema = new mongoose.Schema(
     category: {
       type: String,
       trim: true,
-      lowercase: true,
+      uppercase: true,
       enum: [
         "NEET",
         "JEE",
