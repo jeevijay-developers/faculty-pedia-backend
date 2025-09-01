@@ -1,4 +1,4 @@
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 
 const emailChain = () => body("email").trim().notEmpty().isEmail();
 // const nameChain = () => body("name").trim().notEmpty().isLength({ min: 3, max: 30 });
@@ -99,6 +99,14 @@ const simpleArrayChain = (fieldName) => {
     .withMessage(`Each item in ${fieldName} must be a non-empty string`);
 };
 
+const mongoIdChainInReqParams = (paramName) => {
+  return param(paramName)
+    .trim()
+    .notEmpty()
+    .isMongoId()
+    .withMessage(`${paramName} must be a valid MongoDB ObjectId`);
+};
+
 module.exports = {
   emailChain,
   mobileChain,
@@ -112,4 +120,5 @@ module.exports = {
   arrayEnumChain,
   mongoIDChain,
   simpleArrayChain,
+  mongoIdChainInReqParams,
 };

@@ -1,4 +1,8 @@
-const { createNewBlog, getAllBlogs } = require("../controllers/BlogController");
+const {
+  createNewBlog,
+  getAllBlogs,
+  getLatestBlogs,
+} = require("../controllers/BlogController");
 const { validateBlogTitle } = require("../middlewares/customValidator.config");
 const { verifyToken } = require("../middlewares/jwt.config");
 const { validateRequests } = require("../middlewares/validateRequests.config");
@@ -41,5 +45,6 @@ router.post(
 );
 
 router.get("/get-all-blogs", verifyToken, getAllBlogs);
+router.get("/get-latest-blogs", verifyToken, getLatestBlogs);
 
 module.exports = router;
