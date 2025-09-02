@@ -1,0 +1,92 @@
+const LiveCourse = require('../models/LiveCourse');
+const Educator = require('../models/Educator');
+
+exports.createCourse = async (req, res) => {
+  try {
+    const educatorId = req.params.id;
+    
+    // Check if educator exists
+    const educator = await Educator.findById(educatorId);
+    if (!educator) {
+      return res.status(404).json({ message: "Educator not found." });
+    }
+
+    // Extract course data from request body
+    const {
+      specialization,
+      courseClass,
+      image,
+      title,
+      description,
+      courseType,
+      startDate,
+      endDate,
+      seatLimit,
+      classDuration,
+      fees,
+      videos
+    } = req.body;
+
+    // Validate required fields
+    if (!title || !description?.shortDesc || !description?.longDesc || !startDate || !endDate || !classDuration || fees === undefined) {
+      return res.status(400).json({ 
+        message: "Missing required fields: title, description (shortDesc, longDesc), startDate, endDate, classDuration, and fees are required." 
+      });
+    }
+
+    // Create new course
+    const newCourse = new LiveCourse({
+      specialization,
+      courseClass,
+      educatorId,
+      image,
+      title,
+      description: {
+        shortDesc: description.shortDesc,
+        longDesc: description.longDesc
+      },
+      courseType,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      seatLimit,
+      classDuration,
+      fees,
+      videos,
+      purchases: [],
+      classes: [],
+      tests: []
+    });
+
+    // Save the course
+    await newCourse.save();
+
+    educator.courses.push(newCourse._id);
+    await educator.save();
+
+    return res.status(201).json({
+      message: "Course created successfully",
+      course: newCourse
+    });
+
+  } catch (error) {
+    console.error("Error creating course:", error);
+    
+    // Handle duplicate title error
+    if (error.code === 11000) {
+      return res.status(400).json({ 
+        message: "Course title already exists. Please choose a different title." 
+      });
+    }
+    
+    // Handle validation errors
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({ 
+        message: "Validation error", 
+        errors: validationErrors 
+      });
+    }
+
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};

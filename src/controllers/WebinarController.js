@@ -1,4 +1,5 @@
 const Educator = require("../models/Educator");
+const Webinar = require("../models/Webinar");
 
 exports.createNewWebinar = async (req, res) => {
   try {
@@ -24,3 +25,45 @@ exports.createNewWebinar = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+exports.attendWebinar = async (req, res) => {
+  const webinarId = req.params.webId;
+  const { studentId } = req.body;
+
+  try {
+    const webinar = await Webinar.findById(webinarId);
+    if (!webinar) {
+      return res.status(404).json({ message: "Webinar not found." });
+    }
+    const isEnrolled = webinar.enrolledStudents.some((student) => student.toString() === studentId);
+    if (isEnrolled) {
+      return res.status(200).json({ message: "Already enrolled in the webinar." });
+    }
+    return res.status(400).json({ message: "Enroll in the webinar before attending." });
+  } catch (error) {
+    console.error("Error joining webinar:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+}
+
+exports.enrollWebinar = async (req, res) => {
+  const webinarId = req.params.webId;
+  const studentId = req.body.studentId;
+
+  try {
+    const webinar = await Webinar.findById(webinarId);
+    if (!webinar) {
+      return res.status(404).json({ message: "Webinar not found." });
+    }
+    const isEnrolled = webinar.enrolledStudents.some((student) => student.toString() === studentId);
+    if (isEnrolled) {
+      return res.status(200).json({ message: "Already enrolled in the webinar." });
+    }
+    webinar.enrolledStudents.push(studentId);
+    await webinar.save();
+    return res.status(201).json({ message: "Successfully enrolled in the webinar." });
+  } catch (error) {
+    console.error("Error enrolling in webinar:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+}
