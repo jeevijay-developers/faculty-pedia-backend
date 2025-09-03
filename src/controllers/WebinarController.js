@@ -10,7 +10,7 @@ exports.createNewWebinar = async (req, res) => {
     const webinarData = req.body;
     const newWebinar = new Webinar({
       ...webinarData,
-      teacherId: req.params.id,
+      educatorId: req.params.id,
     });
     await newWebinar.save();
     // also add this webinar to educator's webinars array
@@ -31,7 +31,7 @@ exports.getAllUpcommingWebinars = async (req, res) => {
     const currentDate = new Date();
     const webinars = await Webinar.find({ date: { $gte: currentDate } })
       .sort({ date: 1 })
-      .populate("teacherId", "name email"); // populate educator details
+      .populate("educatorId", "name email"); // populate educator details
     return res.status(200).json(webinars);
   } catch (error) {
     console.error("Error fetching webinars:", error);
