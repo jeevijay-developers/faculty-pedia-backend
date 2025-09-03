@@ -1,4 +1,3 @@
-const { mongo } = require("mongoose");
 const {
     createTestSeries,
     getAllTestSeries,
