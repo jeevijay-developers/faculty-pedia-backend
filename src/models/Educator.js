@@ -29,7 +29,7 @@ const educatorSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    profileImage: {
+    image: {
       public_id: String,
       url: String,
     },
