@@ -66,7 +66,7 @@ const dateFieldChain = (fieldName) => {
 const numberChain = (fieldName, min = 0) => {
   return body(fieldName)
     .notEmpty()
-    .isInt({ min })
+    .isNumeric({ min })
     .withMessage(
       `${fieldName} must be a valid number greater than or equal to ${min}`
     );
@@ -84,8 +84,15 @@ const enumChain = (fieldName, allowedValues) => {
     );
 };
 
-const mongoIDChain = (fieldName) => {
+const mongoIDChainBody = (fieldName) => {
   return body(fieldName)
+    .trim()
+    .notEmpty()
+    .isMongoId()
+    .withMessage(`${fieldName} must be a valid MongoDB ObjectId`);
+};
+const mongoIDChainParams = (fieldName) => {
+  return param(fieldName)
     .trim()
     .notEmpty()
     .isMongoId()
@@ -118,7 +125,8 @@ module.exports = {
   numberChain,
   enumChain,
   arrayEnumChain,
-  mongoIDChain,
+  mongoIDChainBody,
+  mongoIDChainParams,
   simpleArrayChain,
   mongoIdChainInReqParams,
 };

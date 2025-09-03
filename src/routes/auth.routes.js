@@ -41,7 +41,7 @@ router.post(
     passwordChain(),
     stringChain("firstName", 2, 30),
     stringChain("lastName", 2, 30),
-    stringChain("bio", 15, 100),
+    stringChain("bio", 10, 1000),
     body("specialization")
       .isIn(["IIT-JEE", "NEET", "CBSE"])
       .withMessage("Specialization must be one of: IIT-JEE, NEET, CBSE"),

@@ -11,7 +11,14 @@ const {
   numberChain,
   arrayEnumChain,
   enumChain,
+  mongoIDChainBody,
+  mongoIDChainParams,
 } = require("../middlewares/validationChains");
+const {
+  createNewWebinar,
+  attendWebinar,
+  enrollWebinar,
+} = require("../controllers/WebinarController");
 const {
   createNewWebinar,
   getAllUpcommingWebinars,
@@ -20,7 +27,7 @@ const {
 const router = require("express").Router();
 
 router.post(
-  "/create-webinar",
+  "/create-webinar/:id",
   verifyToken,
   [
     stringChain("title", 5, 100).custom(validateWebinarTitle).escape(),
@@ -43,6 +50,20 @@ router.post(
   ],
   validateRequests,
   createNewWebinar
+);
+
+router.get(
+  "/attend-webinar/:webId",
+  verifyToken,
+  [mongoIDChainParams("webId"), mongoIDChainBody("studentId")],
+  attendWebinar
+);
+
+router.get(
+  "/enroll-webinar/:webId",
+  verifyToken,
+  [mongoIDChainParams("webId"), mongoIDChainBody("studentId")],
+  enrollWebinar
 );
 
 router.get(
