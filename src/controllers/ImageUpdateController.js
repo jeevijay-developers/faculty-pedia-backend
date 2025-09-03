@@ -31,59 +31,7 @@ module.updateImage = async (req, res) => {
       { image: image },
       { new: true, runValidators: true }
     );
-    // switch (target) {
-    //   case "EDUCATOR":
-    //     result = await Educator.findByIdAndUpdate(
-    //       id,
-    //       { image: image },
-    //       { new: true, upsert: true }
-    //     );
-    //     break;
-    //   case "STUDENT":
-    //     result = await Student.findByIdAndUpdate(
-    //       id,
-    //       { image: image },
-    //       { new: true, upsert: true }
-    //     );
-    //     break;
-    //   case "LIVE_COURSE":
-    //     result = await LiveCourse.findByIdAndUpdate(
-    //       id,
-    //       { image: image },
-    //       { new: true, upsert: true }
-    //     );
-    //     break;
-    //   case "LIVE_TEST":
-    //     result = await LiveTest.findByIdAndUpdate(
-    //       id,
-    //       { image: image },
-    //       { new: true, upsert: true }
-    //     );
-    //     break;
-    //   case "TEST_SERIES":
-    //     result = await LiveTestSeries.findByIdAndUpdate(
-    //       id,
-    //       { image: image },
-    //       { new: true, upsert: true }
-    //     );
-    //     break;
-    //   case "QUESTION":
-    //     result = await Question.findByIdAndUpdate(
-    //       id,
-    //       { image: image },
-    //       { new: true, upsert: true }
-    //     );
-    //     break;
-    //   case "WEBINAR":
-    //     result = await Webinar.findByIdAndUpdate(
-    //       id,
-    //       { image: image },
-    //       { new: true, upsert: true }
-    //     );
-    //     break;
-    //   default:
-    //     return res.status(400).json({ message: "Invalid target type" });
-    // }
+
     if (!result) {
       return res.status(404).json({ message: "Resource not found" });
     }

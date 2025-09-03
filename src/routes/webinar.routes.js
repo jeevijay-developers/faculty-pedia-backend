@@ -14,7 +14,15 @@ const {
   mongoIDChainBody,
   mongoIDChainParams,
 } = require("../middlewares/validationChains");
-const { createNewWebinar, attendWebinar, enrollWebinar } = require("../controllers/WebinarController");
+const {
+  createNewWebinar,
+  attendWebinar,
+  enrollWebinar,
+} = require("../controllers/WebinarController");
+const {
+  createNewWebinar,
+  getAllUpcommingWebinars,
+} = require("../controllers/WebinarController");
 
 const router = require("express").Router();
 
@@ -44,14 +52,25 @@ router.post(
   createNewWebinar
 );
 
-router.get("/attend-webinar/:webId", verifyToken, [
-  mongoIDChainParams("webId"),
-  mongoIDChainBody("studentId"),
-], attendWebinar);
+router.get(
+  "/attend-webinar/:webId",
+  verifyToken,
+  [mongoIDChainParams("webId"), mongoIDChainBody("studentId")],
+  attendWebinar
+);
 
-router.get("/enroll-webinar/:webId", verifyToken, [
-  mongoIDChainParams("webId"),
-  mongoIDChainBody("studentId"),
-], enrollWebinar);
+router.get(
+  "/enroll-webinar/:webId",
+  verifyToken,
+  [mongoIDChainParams("webId"), mongoIDChainBody("studentId")],
+  enrollWebinar
+);
+
+router.get(
+  "/latest-webinars",
+  verifyToken,
+  validateRequests,
+  getAllUpcommingWebinars
+);
 
 module.exports = router;
