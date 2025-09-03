@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { parseDate } = require("../helpers/utilityFunctions");
 
 const courseSchema = new mongoose.Schema(
   {
@@ -99,5 +100,27 @@ const courseSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+courseSchema.pre("save", function (next) {
+  const START_DATE = parseDate(this.startDate);
+  const END_DATE = parseDate(this.endDate);
+
+  if (
+    !START_DATE ||
+    isNaN(START_DATE.getTime()) ||
+    !END_DATE ||
+    isNaN(END_DATE.getTime())
+  ) {
+    return next(new Error("Invalid class date"));
+  }
+
+  if (START_DATE <= new Date()) {
+    return next(new Error("Class date must be in the future"));
+  }
+
+  this.startDate = START_DATE;
+  this.endDate = END_DATE;
+  next();
+});
 
 module.exports = mongoose.model("LiveCourse", courseSchema);

@@ -12,7 +12,10 @@ const {
   arrayEnumChain,
   enumChain,
 } = require("../middlewares/validationChains");
-const { createNewWebinar } = require("../controllers/WebinarController");
+const {
+  createNewWebinar,
+  getAllUpcommingWebinars,
+} = require("../controllers/WebinarController");
 
 const router = require("express").Router();
 
@@ -40,6 +43,13 @@ router.post(
   ],
   validateRequests,
   createNewWebinar
+);
+
+router.get(
+  "/latest-webinars",
+  verifyToken,
+  validateRequests,
+  getAllUpcommingWebinars
 );
 
 module.exports = router;

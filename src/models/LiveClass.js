@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { parseDate } = require("../helpers/utilityFunctions");
 
 const liveClassSchema = new mongoose.Schema({
   title: {
@@ -23,16 +24,16 @@ const liveClassSchema = new mongoose.Schema({
   },
   time: {
     type: String,
-    require: true,
+    required: true,
   },
   date: {
     type: Date,
-    require: true,
+    required: true,
   },
   duration: {
     // in minutes
     type: Number,
-    require: true,
+    required: true,
   },
   liveClassLink: {
     type: String,
@@ -43,6 +44,28 @@ const liveClassSchema = new mongoose.Schema({
       link: { type: String },
     },
   ],
+});
+
+liveClassSchema.index({
+  title: "text",
+  description: "text",
+  subject: "text",
+  topic: "text",
+});
+liveClassSchema.index({ courseId: 1, date: 1 });
+liveClassSchema.pre("save", function (next) {
+  const parsedDate = parseDate(this.date);
+
+  if (!parsedDate || isNaN(parsedDate.getTime())) {
+    return next(new Error("Invalid class date"));
+  }
+
+  if (parsedDate <= new Date()) {
+    return next(new Error("Class date must be in the future"));
+  }
+
+  this.date = parsedDate;
+  next();
 });
 
 module.exports = mongoose.model("LiveClass", liveClassSchema);

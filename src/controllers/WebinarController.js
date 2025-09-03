@@ -1,4 +1,5 @@
 const Educator = require("../models/Educator");
+const Webinar = require("../models/Webinar");
 
 exports.createNewWebinar = async (req, res) => {
   try {
@@ -24,3 +25,18 @@ exports.createNewWebinar = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+exports.getAllUpcommingWebinars = async (req, res) => {
+  try {
+    const currentDate = new Date();
+    const webinars = await Webinar.find({ date: { $gte: currentDate } })
+      .sort({ date: 1 })
+      .populate("teacherId", "name email"); // populate educator details
+    return res.status(200).json(webinars);
+  } catch (error) {
+    console.error("Error fetching webinars:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+// Additional controller methods can be added here
