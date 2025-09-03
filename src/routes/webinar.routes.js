@@ -18,10 +18,7 @@ const {
   createNewWebinar,
   attendWebinar,
   enrollWebinar,
-} = require("../controllers/WebinarController");
-const {
-  createNewWebinar,
-  getAllUpcommingWebinars,
+  getAllUpcommingWebinars
 } = require("../controllers/WebinarController");
 
 const router = require("express").Router();

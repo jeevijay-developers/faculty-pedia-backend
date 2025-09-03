@@ -1,6 +1,5 @@
 const Educator = require("../models/Educator");
 const Webinar = require("../models/Webinar");
-const Webinar = require("../models/Webinar");
 
 exports.createNewWebinar = async (req, res) => {
   try {
