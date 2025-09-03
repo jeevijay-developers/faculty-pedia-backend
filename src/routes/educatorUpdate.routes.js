@@ -15,6 +15,7 @@ const {
   numberChain,
   arrayFieldChain,
   dateFieldChain,
+  mongoIdChainInReqParams,
 } = require("../middlewares/validationChains");
 
 const router = require("express").Router();
@@ -23,6 +24,7 @@ router.put(
   "/educator/update-name-email-number-bio-ivlink/:educatorId",
   verifyToken,
   [
+    mongoIdChainInReqParams("educatorId"),
     stringChain("firstName", 5, 30).optional(),
     stringChain("lastName", 5, 30).optional(),
     emailChain("email").optional().custom(validateEmail),
@@ -38,6 +40,7 @@ router.put(
   "/educator/update-work-experience/:educatorId",
   verifyToken,
   [
+    mongoIdChainInReqParams("educatorId"),
     arrayFieldChain("workExperience", "title", 2, 100),
     arrayFieldChain("workExperience", "company", 2, 100),
     dateFieldChain("workExperience.*.startDate"),
@@ -50,6 +53,7 @@ router.put(
   "/educator/update-qualifications/:educatorId",
   verifyToken,
   [
+    mongoIdChainInReqParams("educatorId"),
     arrayFieldChain("qualification", "title", 2, 100),
     arrayFieldChain("qualification", "institute", 2, 100),
     dateFieldChain("qualification.*.startDate"),
@@ -63,6 +67,7 @@ router.put(
   "/educator/update-social-links/:educatorId",
   verifyToken,
   [
+    mongoIdChainInReqParams("educatorId"),
     stringChain("socials.linkedin", 5, 200).isURL().optional(),
     stringChain("socials.twitter", 5, 200).isURL().optional(),
     stringChain("socials.facebook", 5, 200).isURL().optional(),
@@ -76,7 +81,19 @@ router.put(
 router.put(
   "/educator/update-specialization-experience/:educatorId",
   verifyToken,
-  [],
+  [
+    mongoIdChainInReqParams("educatorId"),
+    enumChain("specialization", [
+      "Physics",
+      "Chemistry",
+      "Biology",
+      "Mathematics",
+      "IIT-JEE",
+      "NEET",
+      "CBSE",
+    ]),
+    numberChain("yearsExperience", 0),
+  ],
   validateRequests,
   async (req, res) => {
     res

@@ -98,3 +98,24 @@ exports.updateSocialLinks = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+exports.updateSpecializationAndExperience = async (req, res) => {
+  try {
+    const { educatorId } = req.params;
+    const { specialization, yearsExperience } = req.body;
+    const isEducator = await Educator.findById(educatorId);
+    if (!isEducator) {
+      return res.status(404).json({ message: "Educator not found" });
+    }
+    if (specialization) isEducator.specialization = specialization;
+    if (yearsExperience !== undefined)
+      isEducator.yearsExperience = yearsExperience;
+    await isEducator.save();
+    res
+      .status(200)
+      .json({ message: "Educator specialization updated successfully" });
+  } catch (error) {
+    console.error("Error updating educator specialization:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
