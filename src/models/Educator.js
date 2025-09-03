@@ -111,6 +111,18 @@ const educatorSchema = new mongoose.Schema(
         ref: "TestSeries",
       },
     ],
+    liveTests: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "LiveTest",
+      }
+    ],
+    questions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Question",
+      }
+    ],
     followers: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -12,6 +12,10 @@ const optionSchema = new mongoose.Schema({
 });
 
 const questionSchema = new mongoose.Schema({
+  educatorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Educator",
+  },
   title: {
     type: String,
     required: true,
@@ -27,14 +31,6 @@ const questionSchema = new mongoose.Schema({
   topic: {
     type: String,
     required: true,
-  },
-  testId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "LiveTest",
-  },
-  testSeriesId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "LiveTestSeries",
   },
   marks: {
     positive: {

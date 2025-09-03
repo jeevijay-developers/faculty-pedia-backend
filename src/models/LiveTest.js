@@ -40,11 +40,9 @@ const liveTestSchema = new mongoose.Schema(
     overallMarks: {
       positive: {
         type: Number,
-        required: true,
       },
       negative: {
         type: Number,
-        required: true,
       },
     },
     markingType: {
@@ -62,7 +60,6 @@ const liveTestSchema = new mongoose.Schema(
     testSeriesId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "TestSeries",
-      required: true,
     },
     educatorId: {
       type: mongoose.Schema.Types.ObjectId,
