@@ -9,6 +9,9 @@ const WEBINARS_ROUTES = require("./routes/webinar.routes");
 const BLOG_ROUTES = require("./routes/blog.routes");
 const COURSE_ROUTES = require("./routes/liveCourse.routes");
 const STUDENT_UPDATE_ROUTES = require("./routes/studentUpdate.routes");
+const QUESTIONS_ROUTES = require("./routes/LiveTest/question.route");
+const LIVE_TEST_ROUTES = require("./routes/LiveTest/live-test.route"); 
+
 const { connectDB } = require("./helpers/connectDB");
 require("dotenv").config();
 // const
@@ -37,11 +40,12 @@ APP.use(express.urlencoded({ extended: true }));
 APP.use("/api/auth", AUTH_ROUTES);
 APP.use("/api/follow", FOLLOW_ROUTES);
 APP.use("/api/course", COURSE_ROUTES);
+APP.use("/api/live-test", LIVE_TEST_ROUTES);
 APP.use("/api/educator", EDUCATOR_ROUTES);
 APP.use("/api/webinars", WEBINARS_ROUTES);
 APP.use("/api/blog", BLOG_ROUTES);
 APP.use("/api/update", STUDENT_UPDATE_ROUTES);
-
+APP.use("/api/questions", QUESTIONS_ROUTES)
 //? env imports
 const PORT = process.env.PORT;
 
