@@ -1,6 +1,5 @@
 const Educator = require("../models/Educator");
 const Webinar = require("../models/Webinar");
-const Webinar = require("../models/Webinar");
 
 exports.createNewWebinar = async (req, res) => {
   try {
@@ -11,7 +10,7 @@ exports.createNewWebinar = async (req, res) => {
     const webinarData = req.body;
     const newWebinar = new Webinar({
       ...webinarData,
-      teacherId: req.params.id,
+      educatorId: req.params.id,
     });
     await newWebinar.save();
     // also add this webinar to educator's webinars array
@@ -32,7 +31,7 @@ exports.getAllUpcommingWebinars = async (req, res) => {
     const currentDate = new Date();
     const webinars = await Webinar.find({ date: { $gte: currentDate } })
       .sort({ date: 1 })
-      .populate("teacherId", "name email"); // populate educator details
+      .populate("educatorId", "name email"); // populate educator details
     return res.status(200).json(webinars);
   } catch (error) {
     console.error("Error fetching webinars:", error);
@@ -95,3 +94,19 @@ exports.enrollWebinar = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+exports.getWebinarsBySpecialization = async (req, res) => {
+  try {
+    const { specialization } = req.params;
+    if (!specialization) {
+      return res.status(400).json({ message: "Specialization is required." });
+    }
+    const webinars = await Webinar.find({
+      specialization: specialization
+    }).populate('educatorId', 'name profileImage subject rating');
+    return res.status(200).json({ webinars });
+  } catch (error) {
+    console.error("Error fetching webinars by specialization:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+}

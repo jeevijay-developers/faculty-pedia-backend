@@ -90,3 +90,19 @@ exports.createCourse = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+exports.getCoursesBySpecialization = async (req, res) => {
+  try{
+    const { specialization } = req.params;
+    if (!specialization) {
+      return res.status(400).json({ message: "Specialization is required." });
+    }
+    const courses = await LiveCourse.find({
+      specialization: specialization
+    }).populate('educatorId', 'name profileImage subject rating');
+    return res.status(200).json({ courses });
+  } catch (error) {
+    console.error("Error fetching courses by specialization:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+}

@@ -52,7 +52,7 @@ const webinarSchema = new mongoose.Schema(
       public_id: String,
       url: String,
     },
-    teacherId: {
+    educatorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Educator",
       required: true,
