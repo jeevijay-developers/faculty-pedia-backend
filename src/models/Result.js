@@ -44,10 +44,6 @@ const resultSchema = new mongoose.Schema(
           ref: "AttemptedQuestions",
           required: true,
         },
-        isCorrect: {
-          type: Boolean,
-          required: true,
-        },
       },
     ],
   },
