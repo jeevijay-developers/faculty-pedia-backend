@@ -1,3 +1,7 @@
+const {
+  addNestTestSubmission,
+  getTestResults,
+} = require("../../controllers/LiveTest/resultController");
 const { verifyToken } = require("../../middlewares/jwt.config");
 const {
   validateRequests,
@@ -37,9 +41,27 @@ router.post(
     // selectedOption is an array of strings
   ],
   validateRequests,
-  (req, res) => {
-    res.send("Submit test endpoint");
-  }
+  addNestTestSubmission
+);
+
+router.get(
+  "/test-results",
+  verifyToken,
+  [mongoIDChainBody("seriesId"), mongoIDChainBody("testId")],
+  validateRequests,
+  getTestResults
+);
+
+router.get(
+  "/test-result/student",
+  verifyToken,
+  [
+    mongoIDChainBody("studentId"),
+    mongoIDChainBody("seriesId"),
+    mongoIDChainBody("testId"),
+  ],
+  validateRequests,
+  getTestResults
 );
 
 module.exports = router;
