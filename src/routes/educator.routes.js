@@ -1,7 +1,7 @@
-const { updateEducatorStatus } = require("../controllers/EducatorController");
+const { updateEducatorStatus, getEducatorsBySpecialization } = require("../controllers/EducatorController");
 const { verifyToken } = require("../middlewares/jwt.config");
 const { validateRequests } = require("../middlewares/validateRequests.config");
-const { stringChain, enumChain } = require("../middlewares/validationChains");
+const { stringChain, enumChain, mongoIDChainParams } = require("../middlewares/validationChains");
 
 const router = require("express").Router();
 
@@ -13,5 +13,9 @@ router.put(
   validateRequests,
   updateEducatorStatus
 );
+
+router.get("/by-specialization/:specialization", verifyToken, [
+  mongoIDChainParams("specialization")
+], validateRequests, getEducatorsBySpecialization);
 
 module.exports = router;

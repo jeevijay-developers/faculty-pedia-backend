@@ -3,6 +3,7 @@ const {
   getAllBlogs,
   getLatestBlogs,
 } = require("../controllers/BlogController");
+const { getWebinarsBySpecialization } = require("../controllers/WebinarController");
 const { validateBlogTitle } = require("../middlewares/customValidator.config");
 const { verifyToken } = require("../middlewares/jwt.config");
 const { validateRequests } = require("../middlewares/validateRequests.config");
@@ -11,6 +12,7 @@ const {
   enumChain,
   simpleArrayChain,
   mongoIDChainBody,
+  mongoIDChainParams,
 } = require("../middlewares/validationChains");
 
 const router = require("express").Router();
@@ -44,5 +46,8 @@ router.post(
 
 router.get("/get-all-blogs", verifyToken, getAllBlogs);
 router.get("/get-latest-blogs", verifyToken, getLatestBlogs);
+router.get("/by-specialization/:specialization", verifyToken, [
+  mongoIDChainParams("specialization")
+], validateRequests, getWebinarsBySpecialization);
 
 module.exports = router;

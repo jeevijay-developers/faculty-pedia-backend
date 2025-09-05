@@ -7,7 +7,7 @@ const {
   enumChain,
   mongoIDChainParams,
 } = require("../middlewares/validationChains");
-const { createCourse } = require("../controllers/LiveCourseController");
+const { createCourse, getCoursesBySpecialization } = require("../controllers/LiveCourseController");
 
 
 const router = require("express").Router();
@@ -42,5 +42,9 @@ router.post("/create/:id", verifyToken, [
   numberChain("fees", 0),
 
 ], validateRequests, createCourse);
+
+router.get("/by-specialization/:specialization", verifyToken, [
+  mongoIDChainParams("specialization")
+], validateRequests, getCoursesBySpecialization);
 
 module.exports = router;

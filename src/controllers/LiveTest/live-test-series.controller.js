@@ -246,3 +246,20 @@ exports.deleteTestSeries = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.getTestseriesBySpecialization = async (req, res) => {
+    try{
+        const { specialization } = req.params;
+        if (!specialization) {
+            return res.status(400).json({ message: "Specialization is required." });
+        }
+
+        const testSeries = await LiveTestSeries.find({
+            specialization: specialization
+        }).populate('educatorId', 'name profileImage subject rating');
+        return res.status(200).json({ testSeries });
+    } catch (error) {
+        console.error("Error fetching test series by specialization:", error);
+        return res.status(500).json({ message: "Internal server error." });
+    }
+}
