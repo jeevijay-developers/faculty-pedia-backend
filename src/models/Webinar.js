@@ -29,6 +29,14 @@ const webinarSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    subject: {
+      type: String,
+      trim: true,
+    },
+    specialization: {
+      type: String,
+      trim: true,
+    },
     date: {
       type: Date,
       required: true,
@@ -80,4 +88,4 @@ const webinarSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Webinar", webinarSchema);
+module.exports = mongoose.model("Webinar", webinarSchema);``

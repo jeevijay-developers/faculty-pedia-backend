@@ -13,6 +13,7 @@ const {
   stringChain,
   arrayFieldChain,
   dateFieldChain,
+  enumChain,
 } = require("../middlewares/validationChains");
 const {
   validateEmail,
@@ -42,10 +43,8 @@ router.post(
     stringChain("firstName", 2, 30),
     stringChain("lastName", 2, 30),
     stringChain("bio", 10, 1000),
-    body("specialization")
-      .isIn(["IIT-JEE", "NEET", "CBSE"])
-      .withMessage("Specialization must be one of: IIT-JEE, NEET, CBSE"),
-
+    enumChain("specialization", ["IIT-JEE", "NEET", "CBSE"]),
+    stringChain("subject", 2, 100),
     arrayFieldChain("workExperience", "title", 2, 50),
     arrayFieldChain("workExperience", "company", 2, 50),
     dateFieldChain("workExperience.*.startDate"),

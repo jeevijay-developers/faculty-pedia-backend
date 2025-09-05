@@ -8,11 +8,17 @@ const courseSchema = new mongoose.Schema(
       required: true,
       enum: ["IIT-JEE", "NEET", "CBSE"],
       default: "CBSE",
+      trim: true,
     },
     courseClass: {
       type: String,
       enum: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
       default: "10",
+    },
+    subject: {
+      type: String,
+      trim: true,
+      lowercase: true
     },
     educatorId: {
       type: mongoose.Schema.Types.ObjectId,

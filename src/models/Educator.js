@@ -83,15 +83,15 @@ const educatorSchema = new mongoose.Schema(
       required: true,
       trim: true,
       enum: [
-        "Physics",
-        "Chemistry",
-        "Biology",
-        "Mathematics",
         "IIT-JEE",
         "NEET",
         "CBSE",
       ],
       default: "Physics",
+    },
+    subject: {
+      type: String,
+      trim: true,
     },
     courses: [
       {

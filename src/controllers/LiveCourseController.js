@@ -15,6 +15,7 @@ exports.createCourse = async (req, res) => {
     const {
       specialization,
       courseClass,
+      subject,
       image,
       title,
       description,
@@ -28,9 +29,9 @@ exports.createCourse = async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (!title || !description?.shortDesc || !description?.longDesc || !startDate || !endDate || !classDuration || fees === undefined) {
+    if (!title || !description?.shortDesc || !subject || !description?.longDesc || !startDate || !endDate || !classDuration || fees === undefined) {
       return res.status(400).json({ 
-        message: "Missing required fields: title, description (shortDesc, longDesc), startDate, endDate, classDuration, and fees are required." 
+        message: "Missing required fields: title, description (shortDesc, longDesc), subject, startDate, endDate, classDuration, and fees are required." 
       });
     }
 
@@ -39,6 +40,7 @@ exports.createCourse = async (req, res) => {
       specialization,
       courseClass,
       educatorId,
+      subject,
       image,
       title,
       description: {
@@ -93,7 +95,7 @@ exports.createCourse = async (req, res) => {
 
 exports.getCoursesBySpecialization = async (req, res) => {
   try{
-    const { specialization } = req.params;
+    const { specialization } = req.body;
     if (!specialization) {
       return res.status(400).json({ message: "Specialization is required." });
     }
@@ -106,3 +108,19 @@ exports.getCoursesBySpecialization = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 }
+
+exports.getCoursesBySubject = async (req, res) => {
+  try{
+    const { subject } = req.body;
+    if (!subject) {
+      return res.status(400).json({ message: "Subject is required." });
+    }
+
+    // Find courses taught by these educators
+    const courses = await LiveCourse.find({ subject: { $in: subject } })
+    return res.status(200).json({ courses });
+  } catch (error) {
+    console.error("Error fetching courses by subject:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};

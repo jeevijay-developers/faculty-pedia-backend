@@ -263,3 +263,19 @@ exports.getTestseriesBySpecialization = async (req, res) => {
         return res.status(500).json({ message: "Internal server error." });
     }
 }
+
+exports.getTestseriesBySubject = async (req, res) => {
+    try{
+        const { subject } = req.params;
+        if (!subject) {
+            return res.status(400).json({ message: "Subject is required." });
+        }
+        const testSeries = await LiveTestSeries.find({
+            subject: subject
+        }).populate('educatorId', 'name profileImage subject rating');
+        return res.status(200).json({ testSeries });
+    } catch (error) {
+        console.error("Error fetching test series by subject:", error);
+        return res.status(500).json({ message: "Internal server error." });
+    }
+}

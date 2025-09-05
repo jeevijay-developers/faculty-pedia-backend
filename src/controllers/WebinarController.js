@@ -97,7 +97,7 @@ exports.enrollWebinar = async (req, res) => {
 
 exports.getWebinarsBySpecialization = async (req, res) => {
   try {
-    const { specialization } = req.params;
+    const { specialization } = req.body;
     if (!specialization) {
       return res.status(400).json({ message: "Specialization is required." });
     }
@@ -110,3 +110,19 @@ exports.getWebinarsBySpecialization = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 }
+
+exports.getWebinarsBySubject = async (req, res) => {
+  try {
+    const { subject } = req.body;
+    if (!subject) {
+      return res.status(400).json({ message: "Subject is required." });
+    }
+    const webinars = await Webinar.find({
+      subject: subject
+    }).populate('educatorId', 'name profileImage subject rating');
+    return res.status(200).json({ webinars });
+  } catch (error) {
+    console.error("Error fetching webinars by subject:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};

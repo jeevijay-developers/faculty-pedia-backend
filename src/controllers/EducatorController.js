@@ -33,7 +33,7 @@ exports.updateEducatorStatus = async (req, res) => {
 
 exports.getEducatorsBySpecialization = async (req, res) => {
   try {
-    const { specialization } = req.params;
+    const { specialization } = req.body;
     if (!specialization) {
       return res.status(400).json({ message: "Specialization is required." });
     }
@@ -48,3 +48,22 @@ exports.getEducatorsBySpecialization = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+exports.getEducatorsBySubject = async (req, res) => {
+  try {
+    const { subject } = req.body;
+
+    if (!subject) {
+      return res.status(400).json({ message: "Subject is required." });
+    }
+    const educators = await Educator.find({
+      subject: subject,
+      status: "active",
+    }).populate("followers");
+    return res.status(200).json({ educators });
+
+  } catch (error) {
+    console.error("Error fetching educators by subject:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+}

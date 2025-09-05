@@ -4,7 +4,8 @@ const {
     getTestSeriesById,
     updateTestSeries,
     deleteTestSeries,
-    getTestseriesBySpecialization
+    getTestseriesBySpecialization,
+    getTestseriesBySubject
 } = require("../../controllers/LiveTest/live-test-series.controller");
 const { verifyToken } = require("../../middlewares/jwt.config");
 const { validateRequests } = require("../../middlewares/validateRequests.config");
@@ -90,8 +91,12 @@ router.delete("/:id", verifyToken, [
     mongoIDChainParams("id"),
 ], validateRequests, deleteTestSeries);
 
-router.get("/by-specialization/:specialization", verifyToken, [
-  mongoIDChainParams("specialization")
+router.get("/by-specialization", verifyToken, [
+  stringChain("specialization", 2, 10)
 ], validateRequests, getTestseriesBySpecialization);
+
+router.get("/by-subject", verifyToken, [
+  stringChain("subject", 2, 20)
+], validateRequests, getTestseriesBySubject);
 
 module.exports = router;

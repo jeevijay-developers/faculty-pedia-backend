@@ -78,7 +78,7 @@ router.get("/educator/:educatorId", [
 ], validateRequests, getTestsByEducator);
 
 // Get tests by subject
-router.get("/subject/:subject", [
+router.get("/subject", [
     param("subject").trim().isLength({ min: 2, max: 100 }).withMessage("Subject must be between 2 to 100 characters"),
     query("page").optional().isInt({ min: 1 }),
     query("limit").optional().isInt({ min: 1, max: 100 }),
