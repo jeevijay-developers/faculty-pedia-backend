@@ -30,6 +30,7 @@ router.post("/create-test", verifyToken, [
     stringChain("description.short", 10, 500),
     stringChain("description.long", 20, 2000),
     stringChain("subject", 2, 100),
+    enumChain("specialization", ["IIT-JEE", "NEET", "CBSE"]),
     dateFieldChain("startDate"),
     numberChain("duration", 1), // duration in minutes, minimum 1
     numberChain("overallMarks.positive", 0).optional(),

@@ -2,8 +2,8 @@ const Blog = require("../models/Blog");
 
 exports.createNewBlog = async (req, res) => {
   try {
-    // Controller logic to create a blog post goes herecop
-    const blog = await Blog.create(req.body);
+    // Controller logic to create a blog post goes here
+    await Blog.create(req.body);
 
     res.status(201).json({ message: "Blog post created successfully" });
   } catch (error) {

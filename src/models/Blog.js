@@ -47,26 +47,23 @@ const blogSchema = new mongoose.Schema(
         lowercase: true,
       },
     ],
-    category: {
-      type: String,
-      trim: true,
-      uppercase: true,
-      enum: [
-        "NEET",
-        "JEE",
-        "UPSC",
-        "SSC",
-        "BANKING",
-        "RAILWAYS",
-        "OTHER",
-        "CBSE",
-        "ICSE",
-        "STATE_BOARD",
-      ],
-    },
     image: {
       public_id: String,
       url: String,
+    },
+    specialization: {
+      type: String,
+      required: true,
+      trim: true,
+      enum: [
+        "IIT-JEE",
+        "NEET",
+        "CBSE",
+      ],
+    },
+    subject: {
+      type: String,
+      trim: true,
     },
     isPublished: {
       type: Boolean,

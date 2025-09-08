@@ -12,7 +12,6 @@ const {
   enumChain,
   simpleArrayChain,
   mongoIDChainBody,
-  mongoIDChainParams,
 } = require("../middlewares/validationChains");
 
 const router = require("express").Router();
@@ -27,18 +26,8 @@ router.post(
     stringChain("content.long", 20, 5000),
     mongoIDChainBody("author"),
     simpleArrayChain("tags"), // No specific allowed values for tags
-    enumChain("category", [
-      "NEET",
-      "JEE",
-      "UPSC",
-      "SSC",
-      "BANKING",
-      "RAILWAYS",
-      "OTHER",
-      "CBSE",
-      "ICSE",
-      "STATE_BOARD",
-    ]),
+    enumChain("specialization", ["IIT-JEE", "NEET", "CBSE"]),
+    stringChain("subject", 2, 30),
   ],
   validateRequests,
   createNewBlog

@@ -10,7 +10,8 @@ exports.createTest = async (req, res) => {
             subject, 
             startDate, 
             duration, 
-            overallMarks, 
+            overallMarks,
+            specialization, 
             markingType, 
             questions, 
             testSeriesId 
@@ -25,6 +26,7 @@ exports.createTest = async (req, res) => {
             duration,
             overallMarks,
             markingType,
+            specialization,
             questions,
             testSeriesId,
             educatorId

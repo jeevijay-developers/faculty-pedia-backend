@@ -4,7 +4,7 @@ const { uploadToCloudinary } = require("../../helpers/cloudinary");
 
 exports.createQuestion = async (req, res) => {
   try {
-    const educatorId = req.user.id; // Get educator ID from verified token
+    const educatorId = req.body.educatorId; // Get educator ID from verified token
     let questionData = { ...req.body, educatorId };
 
     // Handle question image upload if present
