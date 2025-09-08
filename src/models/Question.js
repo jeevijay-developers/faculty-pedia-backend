@@ -28,6 +28,12 @@ const questionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  specialization: {
+    type: String,
+    required: true,
+    enum: ["IIT-JEE", "NEET", "CBSE"],
+    trim: true,
+  },
   topic: {
     type: String,
     required: true,

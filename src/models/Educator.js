@@ -87,7 +87,6 @@ const educatorSchema = new mongoose.Schema(
         "NEET",
         "CBSE",
       ],
-      default: "Physics",
     },
     subject: {
       type: String,

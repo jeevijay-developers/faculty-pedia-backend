@@ -46,6 +46,18 @@ const testSeriesSchema = new mongoose.Schema({
     ref: "Educator",
     required: true,
   },
+  subject: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+  },
+  specialization: {
+    type: String,
+    required: true,
+    enum: ["IIT-JEE", "NEET", "CBSE"],
+    trim: true,
+  },
   enrolledStudents: [
     {
       studentId: {

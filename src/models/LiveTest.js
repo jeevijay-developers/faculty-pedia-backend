@@ -29,6 +29,12 @@ const liveTestSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
+    specialization: {
+      type: String,
+      required: true,
+      enum: ["IIT-JEE", "NEET", "CBSE"],
+      trim: true,
+    },
     startDate: {
       type: Date,
       required: true,

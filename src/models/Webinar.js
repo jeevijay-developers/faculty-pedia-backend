@@ -29,12 +29,21 @@ const webinarSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    subject: {
-      type: String,
-      trim: true,
-    },
+  subject:{
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+  },
+  specialization:{
+    type: String,
+    required: true,
+    trim: true,
+  },
     specialization: {
       type: String,
+      required: true,
+      enum: ["IIT-JEE", "NEET", "CBSE"],
       trim: true,
     },
     date: {
@@ -88,4 +97,4 @@ const webinarSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Webinar", webinarSchema);``
+module.exports = mongoose.model("Webinar", webinarSchema);

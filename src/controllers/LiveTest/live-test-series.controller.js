@@ -249,7 +249,7 @@ exports.deleteTestSeries = async (req, res) => {
 
 exports.getTestseriesBySpecialization = async (req, res) => {
     try{
-        const { specialization } = req.params;
+        const { specialization } = req.body;
         if (!specialization) {
             return res.status(400).json({ message: "Specialization is required." });
         }
@@ -266,7 +266,7 @@ exports.getTestseriesBySpecialization = async (req, res) => {
 
 exports.getTestseriesBySubject = async (req, res) => {
     try{
-        const { subject } = req.params;
+        const { subject } = req.body;
         if (!subject) {
             return res.status(400).json({ message: "Subject is required." });
         }

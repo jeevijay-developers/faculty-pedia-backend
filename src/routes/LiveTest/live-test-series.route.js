@@ -21,6 +21,14 @@ const { query, body } = require("express-validator");
 const router = require("express").Router();
 
 // Create test series
+router.get("/by-specialization", verifyToken, [
+  stringChain("specialization", 2, 10)
+], validateRequests, getTestseriesBySpecialization);
+
+router.get("/by-subject", verifyToken, [
+  stringChain("subject", 2, 20)
+], validateRequests, getTestseriesBySubject);
+
 router.post("/create-test-series", verifyToken, [
     mongoIDChainBody("educatorId"),
     stringChain("title", 3, 200),
@@ -91,12 +99,5 @@ router.delete("/:id", verifyToken, [
     mongoIDChainParams("id"),
 ], validateRequests, deleteTestSeries);
 
-router.get("/by-specialization", verifyToken, [
-  stringChain("specialization", 2, 10)
-], validateRequests, getTestseriesBySpecialization);
-
-router.get("/by-subject", verifyToken, [
-  stringChain("subject", 2, 20)
-], validateRequests, getTestseriesBySubject);
 
 module.exports = router;

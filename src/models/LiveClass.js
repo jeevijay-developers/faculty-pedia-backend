@@ -15,9 +15,16 @@ const liveClassSchema = new mongoose.Schema({
     ref: "LiveCourse",
     required: true,
   },
-  subject: {
+  subject:{
     type: String,
     required: true,
+    trim: true,
+    lowercase: true,
+  },
+  specialization:{
+    type: String,
+    required: true,
+    trim: true,
   },
   topic: {
     type: String,
