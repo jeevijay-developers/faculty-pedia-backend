@@ -2,8 +2,9 @@ const {
   createNewBlog,
   getAllBlogs,
   getLatestBlogs,
+  getBlogsBySpecialization,
+  getBlogsBySubject,
 } = require("../controllers/BlogController");
-const { getWebinarsBySpecialization, getWebinarsBySubject } = require("../controllers/WebinarController");
 const { validateBlogTitle } = require("../middlewares/customValidator.config");
 const { verifyToken } = require("../middlewares/jwt.config");
 const { validateRequests } = require("../middlewares/validateRequests.config");
@@ -37,10 +38,10 @@ router.get("/get-all-blogs", verifyToken, getAllBlogs);
 router.get("/get-latest-blogs", verifyToken, getLatestBlogs);
 router.get("/by-specialization", verifyToken, [
   stringChain("specialization", 2, 10)
-], validateRequests, getWebinarsBySpecialization);
+], validateRequests, getBlogsBySpecialization);
 
 router.get("/by-subject", verifyToken, [
   stringChain("subject", 2, 20)
-], validateRequests, getWebinarsBySubject);
+], validateRequests, getBlogsBySubject);
 
 module.exports = router;

@@ -44,7 +44,7 @@ APP.use("/api/follow", FOLLOW_ROUTES);
 APP.use("/api/course", COURSE_ROUTES);
 APP.use("/api/educator", EDUCATOR_ROUTES);
 APP.use("/api/webinars", WEBINARS_ROUTES);
-APP.use("/api/blog", BLOG_ROUTES);
+APP.use("/api/blogs", BLOG_ROUTES);
 APP.use("/api/update", STUDENT_UPDATE_ROUTES);
 APP.use("/api/questions", QUESTIONS_ROUTES);
 APP.use("/api/live-test", LIVE_TEST_ROUTES);
