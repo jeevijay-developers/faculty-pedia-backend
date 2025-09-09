@@ -29,17 +29,18 @@ const webinarSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-  subject:{
-    type: String,
-    required: true,
-    trim: true,
-    lowercase: true,
-  },
-  specialization:{
-    type: String,
-    required: true,
-    trim: true,
-  },
+    subject: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
+    // specialization: {
+    //   type: String,
+    //   required: true,
+    //   uppercase: true,
+    //   trim: true,
+    // },
     specialization: {
       type: String,
       required: true,

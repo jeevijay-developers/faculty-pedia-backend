@@ -102,14 +102,14 @@ exports.getWebinarsBySpecialization = async (req, res) => {
       return res.status(400).json({ message: "Specialization is required." });
     }
     const webinars = await Webinar.find({
-      specialization: specialization
-    }).populate('educatorId', 'name profileImage subject rating');
+      specialization: specialization,
+    }).populate("educatorId");
     return res.status(200).json({ webinars });
   } catch (error) {
     console.error("Error fetching webinars by specialization:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
-}
+};
 
 exports.getWebinarsBySubject = async (req, res) => {
   try {
@@ -118,8 +118,8 @@ exports.getWebinarsBySubject = async (req, res) => {
       return res.status(400).json({ message: "Subject is required." });
     }
     const webinars = await Webinar.find({
-      subject: subject
-    }).populate('educatorId', 'name profileImage subject rating');
+      subject: subject,
+    }).populate("educatorId", "name profileImage subject rating");
     return res.status(200).json({ webinars });
   } catch (error) {
     console.error("Error fetching webinars by subject:", error);

@@ -51,17 +51,19 @@ exports.getLatestBlogs = async (req, res) => {
 exports.getBlogsBySpecialization = async (req, res) => {
   try {
     const { specialization } = req.body;
-    
+
     // Pagination parameters
     const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
-    const limit = parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 10;
+    const limit =
+      parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 10;
     const skip = (page - 1) * limit;
 
     const [blogs, total] = await Promise.all([
       Blog.find({ specialization: specialization.toUpperCase() })
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(limit),
+        .limit(limit)
+        .populate("author"),
       Blog.countDocuments({ specialization: specialization.toUpperCase() }),
     ]);
 
@@ -82,10 +84,11 @@ exports.getBlogsBySpecialization = async (req, res) => {
 exports.getBlogsBySubject = async (req, res) => {
   try {
     const { subject } = req.body;
-    
+
     // Pagination parameters
     const page = parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
-    const limit = parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 10;
+    const limit =
+      parseInt(req.query.limit) > 0 ? parseInt(req.query.limit) : 10;
     const skip = (page - 1) * limit;
 
     const [blogs, total] = await Promise.all([
@@ -109,4 +112,3 @@ exports.getBlogsBySubject = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-

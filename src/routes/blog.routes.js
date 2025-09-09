@@ -36,12 +36,20 @@ router.post(
 
 router.get("/get-all-blogs", verifyToken, getAllBlogs);
 router.get("/get-latest-blogs", verifyToken, getLatestBlogs);
-router.get("/by-specialization", verifyToken, [
-  stringChain("specialization", 2, 10)
-], validateRequests, getBlogsBySpecialization);
+router.post(
+  "/by-specialization",
+  verifyToken,
+  [stringChain("specialization", 2, 10)],
+  validateRequests,
+  getBlogsBySpecialization
+);
 
-router.get("/by-subject", verifyToken, [
-  stringChain("subject", 2, 20)
-], validateRequests, getBlogsBySubject);
+router.get(
+  "/by-subject",
+  verifyToken,
+  [stringChain("subject", 2, 20)],
+  validateRequests,
+  getBlogsBySubject
+);
 
 module.exports = router;

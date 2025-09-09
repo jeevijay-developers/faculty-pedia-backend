@@ -1,10 +1,10 @@
-const LiveCourse = require('../models/LiveCourse');
-const Educator = require('../models/Educator');
+const LiveCourse = require("../models/LiveCourse");
+const Educator = require("../models/Educator");
 
 exports.createCourse = async (req, res) => {
   try {
     const educatorId = req.params.id;
-    
+
     // Check if educator exists
     const educator = await Educator.findById(educatorId);
     if (!educator) {
@@ -25,13 +25,23 @@ exports.createCourse = async (req, res) => {
       seatLimit,
       classDuration,
       fees,
-      videos
+      videos,
     } = req.body;
 
     // Validate required fields
-    if (!title || !description?.shortDesc || !subject || !description?.longDesc || !startDate || !endDate || !classDuration || fees === undefined) {
-      return res.status(400).json({ 
-        message: "Missing required fields: title, description (shortDesc, longDesc), subject, startDate, endDate, classDuration, and fees are required." 
+    if (
+      !title ||
+      !description?.shortDesc ||
+      !subject ||
+      !description?.longDesc ||
+      !startDate ||
+      !endDate ||
+      !classDuration ||
+      fees === undefined
+    ) {
+      return res.status(400).json({
+        message:
+          "Missing required fields: title, description (shortDesc, longDesc), subject, startDate, endDate, classDuration, and fees are required.",
       });
     }
 
@@ -45,7 +55,7 @@ exports.createCourse = async (req, res) => {
       title,
       description: {
         shortDesc: description.shortDesc,
-        longDesc: description.longDesc
+        longDesc: description.longDesc,
       },
       courseType,
       startDate: new Date(startDate),
@@ -56,7 +66,7 @@ exports.createCourse = async (req, res) => {
       videos,
       purchases: [],
       classes: [],
-      tests: []
+      tests: [],
     });
 
     // Save the course
@@ -67,25 +77,27 @@ exports.createCourse = async (req, res) => {
 
     return res.status(201).json({
       message: "Course created successfully",
-      course: newCourse
+      course: newCourse,
     });
-
   } catch (error) {
     console.error("Error creating course:", error);
-    
+
     // Handle duplicate title error
     if (error.code === 11000) {
-      return res.status(400).json({ 
-        message: "Course title already exists. Please choose a different title." 
+      return res.status(400).json({
+        message:
+          "Course title already exists. Please choose a different title.",
       });
     }
-    
+
     // Handle validation errors
-    if (error.name === 'ValidationError') {
-      const validationErrors = Object.values(error.errors).map(err => err.message);
-      return res.status(400).json({ 
-        message: "Validation error", 
-        errors: validationErrors 
+    if (error.name === "ValidationError") {
+      const validationErrors = Object.values(error.errors).map(
+        (err) => err.message
+      );
+      return res.status(400).json({
+        message: "Validation error",
+        errors: validationErrors,
       });
     }
 
@@ -94,33 +106,48 @@ exports.createCourse = async (req, res) => {
 };
 
 exports.getCoursesBySpecialization = async (req, res) => {
-  try{
+  try {
     const { specialization } = req.body;
     if (!specialization) {
       return res.status(400).json({ message: "Specialization is required." });
     }
     const courses = await LiveCourse.find({
-      specialization: specialization
-    }).populate('educatorId', 'name profileImage subject rating');
+      specialization: specialization,
+    }).populate("educatorId");
     return res.status(200).json({ courses });
   } catch (error) {
     console.error("Error fetching courses by specialization:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
-}
+};
 
 exports.getCoursesBySubject = async (req, res) => {
-  try{
+  try {
     const { subject } = req.body;
     if (!subject) {
       return res.status(400).json({ message: "Subject is required." });
     }
 
     // Find courses taught by these educators
-    const courses = await LiveCourse.find({ subject: { $in: subject } })
+    const courses = await LiveCourse.find({ subject: subject });
     return res.status(200).json({ courses });
   } catch (error) {
     console.error("Error fetching courses by subject:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+// Get all OTO (one-to-one) courses that have zero purchases
+exports.getAvailableOtoCourses = async (req, res) => {
+  try {
+    const courses = await LiveCourse.find({
+      courseType: "OTO",
+      purchases: { $size: 0 },
+    }).populate("educatorId");
+
+    return res.status(200).json({ courses });
+  } catch (error) {
+    console.error("Error fetching available OTO courses:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
 };

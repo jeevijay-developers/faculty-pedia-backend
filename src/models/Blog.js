@@ -37,7 +37,7 @@ const blogSchema = new mongoose.Schema(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // assuming you have a User model
+      ref: "Educator", // assuming you have a User model
       required: true,
     },
     tags: [
@@ -55,11 +55,7 @@ const blogSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      enum: [
-        "IIT-JEE",
-        "NEET",
-        "CBSE",
-      ],
+      enum: ["IIT-JEE", "NEET", "CBSE"],
     },
     subject: {
       type: String,
