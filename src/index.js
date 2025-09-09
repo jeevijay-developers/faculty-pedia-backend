@@ -12,6 +12,7 @@ const STUDENT_UPDATE_ROUTES = require("./routes/studentUpdate.routes");
 const QUESTIONS_ROUTES = require("./routes/LiveTest/question.route");
 const LIVE_TEST_ROUTES = require("./routes/LiveTest/live-test.route");
 const TEST_SERIES_ROUTES = require("./routes/LiveTest/live-test-series.route");
+const PAY_PER_HOUR_ROUTES = require("./routes/one-onePPH.route");
 const TEST_ROUTES = require("./routes/result/test.routes");
 
 const { connectDB } = require("./helpers/connectDB");
@@ -46,6 +47,7 @@ APP.use("/api/educator", EDUCATOR_ROUTES);
 APP.use("/api/webinars", WEBINARS_ROUTES);
 APP.use("/api/blogs", BLOG_ROUTES);
 APP.use("/api/update", STUDENT_UPDATE_ROUTES);
+APP.use("/api/pay-per-hour", PAY_PER_HOUR_ROUTES);
 APP.use("/api/questions", QUESTIONS_ROUTES);
 APP.use("/api/live-test", LIVE_TEST_ROUTES);
 APP.use("/api/test-series", TEST_SERIES_ROUTES);

@@ -33,6 +33,10 @@ const educatorSchema = new mongoose.Schema(
       public_id: String,
       url: String,
     },
+    payPerHourFees: {
+      type: Number,
+      default: 0,
+    },
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Student" }],
     bio: {
       type: String,
