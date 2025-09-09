@@ -1,4 +1,4 @@
-const { updateEducatorStatus, getEducatorsBySpecialization, getEducatorsBySubject } = require("../controllers/EducatorController");
+const { updateEducatorStatus, getEducatorsBySpecialization, getEducatorsBySubject, getEducatorById } = require("../controllers/EducatorController");
 const { verifyToken } = require("../middlewares/jwt.config");
 const { validateRequests } = require("../middlewares/validateRequests.config");
 const { stringChain, enumChain, mongoIDChainParams } = require("../middlewares/validationChains");
@@ -21,5 +21,9 @@ router.get("/by-specialization", verifyToken, [
 router.get("/by-subject", verifyToken, [
   stringChain("subject", 2, 20)
 ], validateRequests, getEducatorsBySubject);
+
+router.get("/by-id/:id", verifyToken, [
+  mongoIDChainParams("id")
+], validateRequests, getEducatorById);
 
 module.exports = router;

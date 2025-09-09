@@ -4,6 +4,7 @@ const {
   getLatestBlogs,
   getBlogsBySpecialization,
   getBlogsBySubject,
+  getBlogById,
 } = require("../controllers/BlogController");
 const { validateBlogTitle } = require("../middlewares/customValidator.config");
 const { verifyToken } = require("../middlewares/jwt.config");
@@ -13,6 +14,7 @@ const {
   enumChain,
   simpleArrayChain,
   mongoIDChainBody,
+  mongoIDChainParams,
 } = require("../middlewares/validationChains");
 
 const router = require("express").Router();
@@ -43,5 +45,9 @@ router.get("/by-specialization", verifyToken, [
 router.get("/by-subject", verifyToken, [
   stringChain("subject", 2, 20)
 ], validateRequests, getBlogsBySubject);
+
+router.get("/:id", verifyToken, [
+  mongoIDChainParams("id")
+], validateRequests, getBlogById);
 
 module.exports = router;

@@ -37,7 +37,7 @@ const blogSchema = new mongoose.Schema(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // assuming you have a User model
+      ref: "Educator", // assuming you have a Educator model
       required: true,
     },
     tags: [

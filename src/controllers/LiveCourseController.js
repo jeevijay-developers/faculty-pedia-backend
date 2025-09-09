@@ -124,3 +124,23 @@ exports.getCoursesBySubject = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+exports.getCourseById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const course = await LiveCourse.findById(id)
+      .populate('educatorId', 'name email profileImage subject rating')
+      .populate('purchases.studentId', 'name email')
+      .populate('tests', 'title startDate duration');
+    
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    return res.status(200).json(course);
+  } catch (error) {
+    console.error("Error fetching course by ID:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

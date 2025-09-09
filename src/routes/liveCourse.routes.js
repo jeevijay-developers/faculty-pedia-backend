@@ -7,7 +7,7 @@ const {
   enumChain,
   mongoIDChainParams,
 } = require("../middlewares/validationChains");
-const { createCourse, getCoursesBySpecialization, getCoursesBySubject } = require("../controllers/LiveCourseController");
+const { createCourse, getCoursesBySpecialization, getCoursesBySubject, getCourseById } = require("../controllers/LiveCourseController");
 
 
 const router = require("express").Router();
@@ -50,5 +50,9 @@ router.get("/by-specialization", verifyToken, [
 router.get("/by-subject", verifyToken, [
   stringChain("subject", 2, 20)
 ], validateRequests, getCoursesBySubject);
+
+router.get("/:id", verifyToken, [
+  mongoIDChainParams("id")
+], validateRequests, getCourseById);
 
 module.exports = router;

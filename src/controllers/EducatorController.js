@@ -67,3 +67,19 @@ exports.getEducatorsBySubject = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 }
+
+exports.getEducatorById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Educator ID is required." });
+    }
+    const educator = await Educator.findById(id);
+    if (!educator) {
+      return res.status(404).json({ message: "Educator not found." });
+    }
+  } catch (error) {
+    console.error("Error fetching educator by ID:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+}
