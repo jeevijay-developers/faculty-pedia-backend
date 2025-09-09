@@ -21,6 +21,7 @@ const {
   getAllUpcommingWebinars,
   getWebinarsBySpecialization,
   getWebinarsBySubject,
+  getWebinarById,
 } = require("../controllers/WebinarController");
 
 const router = require("express").Router();
@@ -86,6 +87,14 @@ router.get(
   [stringChain("subject", 2, 20)],
   validateRequests,
   getWebinarsBySubject
+);
+
+router.get(
+  "/:id",
+  verifyToken,
+  [mongoIDChainParams("id")],
+  validateRequests,
+  getWebinarById
 );
 
 module.exports = router;

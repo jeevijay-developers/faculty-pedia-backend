@@ -126,3 +126,22 @@ exports.getWebinarsBySubject = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+exports.getWebinarById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const webinar = await Webinar.findById(id)
+      .populate('educatorId', 'name email profileImage subject rating')
+      .populate('enrolledStudents', 'name email');
+    
+    if (!webinar) {
+      return res.status(404).json({ message: "Webinar not found" });
+    }
+
+    return res.status(200).json(webinar);
+  } catch (error) {
+    console.error("Error fetching webinar by ID:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

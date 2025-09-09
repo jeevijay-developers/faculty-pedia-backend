@@ -11,6 +11,7 @@ const {
   createCourse,
   getCoursesBySpecialization,
   getCoursesBySubject,
+  getCourseById,
   getAvailableOtoCourses,
 } = require("../controllers/LiveCourseController");
 
@@ -73,6 +74,21 @@ router.post(
   getCoursesBySpecialization
 );
 
+router.get(
+  "/by-subject",
+  verifyToken,
+  [stringChain("subject", 2, 20)],
+  validateRequests,
+  getCoursesBySubject
+);
+
+router.get(
+  "/:id",
+  verifyToken,
+  [mongoIDChainParams("id")],
+  validateRequests,
+  getCourseById
+);
 router.get(
   "/by-subject",
   verifyToken,
