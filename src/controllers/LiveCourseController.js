@@ -142,7 +142,7 @@ exports.getCourseById = async (req, res) => {
     const { id } = req.params;
 
     const course = await LiveCourse.findById(id)
-      .populate("educatorId", "name email profileImage subject rating")
+      .populate("educatorId", "firstName lastName email image subject rating")
       .populate("purchases.studentId", "name email")
       .populate("tests", "title startDate duration");
 
@@ -162,6 +162,21 @@ exports.getAvailableOtoCourses = async (req, res) => {
   try {
     const courses = await LiveCourse.find({
       courseType: "OTO",
+      purchases: { $size: 0 },
+    }).populate("educatorId");
+
+    return res.status(200).json({ courses });
+  } catch (error) {
+    console.error("Error fetching available OTO courses:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+exports.getAvailableOtoCoursesBySubject = async (req, res) => {
+  try {
+    const { subject } = req.params;
+    const courses = await LiveCourse.find({
+      courseType: "OTO",
+      subject: subject,
       purchases: { $size: 0 },
     }).populate("educatorId");
 

@@ -61,12 +61,11 @@ exports.getEducatorsBySubject = async (req, res) => {
       status: "active",
     }).populate("followers");
     return res.status(200).json({ educators });
-
   } catch (error) {
     console.error("Error fetching educators by subject:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
-}
+};
 
 exports.getEducatorById = async (req, res) => {
   try {
@@ -78,8 +77,9 @@ exports.getEducatorById = async (req, res) => {
     if (!educator) {
       return res.status(404).json({ message: "Educator not found." });
     }
+    return res.status(200).json({ educator });
   } catch (error) {
     console.error("Error fetching educator by ID:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
-}
+};

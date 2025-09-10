@@ -32,7 +32,7 @@ router.post(
   getEducatorsBySpecialization
 );
 
-router.get(
+router.post(
   "/by-subject",
   verifyToken,
   [stringChain("subject", 2, 20)],

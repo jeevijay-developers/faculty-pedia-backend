@@ -13,7 +13,9 @@ const {
   getCoursesBySubject,
   getCourseById,
   getAvailableOtoCourses,
+  getAvailableOtoCoursesBySubject,
 } = require("../controllers/LiveCourseController");
+const { param } = require("express-validator");
 
 const router = require("express").Router();
 
@@ -81,7 +83,8 @@ router.get(
   validateRequests,
   getCoursesBySubject
 );
-
+// Fetch all OTO type live courses with zero purchases
+router.get("/available-oto", verifyToken, getAvailableOtoCourses);
 router.get(
   "/:id",
   verifyToken,
@@ -89,15 +92,25 @@ router.get(
   validateRequests,
   getCourseById
 );
-router.get(
+router.post(
   "/by-subject",
   verifyToken,
   [stringChain("subject", 2, 20)],
   validateRequests,
   getCoursesBySubject
 );
-
-// Fetch all OTO type live courses with zero purchases
-router.get("/available-oto", verifyToken, getAvailableOtoCourses);
+router.get(
+  "/available-oto-by-subject/:subject",
+  verifyToken,
+  [
+    param("subject")
+      .trim()
+      .isString()
+      .isLength({ min: 2, max: 20 })
+      .withMessage("Subject must be a string between 2 and 20 characters."),
+  ],
+  validateRequests,
+  getAvailableOtoCoursesBySubject
+);
 
 module.exports = router;

@@ -81,7 +81,7 @@ router.post(
   getWebinarsBySpecialization
 );
 
-router.get(
+router.post(
   "/by-subject",
   verifyToken,
   [stringChain("subject", 2, 20)],
@@ -90,7 +90,7 @@ router.get(
 );
 
 router.get(
-  "/:id",
+  "/webinar-by-id/:id",
   verifyToken,
   [mongoIDChainParams("id")],
   validateRequests,
