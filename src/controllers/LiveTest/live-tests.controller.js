@@ -1,5 +1,5 @@
 const educator = require("../../models/Educator");
-const liveTest = require("../../models/LiveTest");
+const LiveTest = require("../../models/LiveTest");
 
 exports.createTest = async (req, res) => {
     try {
@@ -40,7 +40,7 @@ exports.createTest = async (req, res) => {
         });
 
         // Populate the response with related data
-        const populatedTest = await liveTest.findById(newLiveTest._id)
+        const populatedTest = await LiveTest.findById(newLiveTest._id)
             .populate('educatorId', 'name email')
             .populate('testSeriesId', 'title')
             .populate('questions', 'title subject topic');
@@ -77,7 +77,7 @@ exports.getAllTests = async (req, res) => {
             filter.startDate = { ...filter.startDate, $lte: new Date(req.query.endDate) };
         }
 
-        const tests = await liveTest
+        const tests = await LiveTest
             .find(filter)
             .populate('educatorId', 'name email')
             .populate('testSeriesId', 'title')
@@ -86,7 +86,7 @@ exports.getAllTests = async (req, res) => {
             .skip(skip)
             .limit(limit);
 
-        const total = await liveTest.countDocuments(filter);
+        const total = await LiveTest.countDocuments(filter);
 
         res.status(200).json({
             tests,
@@ -107,7 +107,7 @@ exports.getAllTests = async (req, res) => {
 // Get live test by ID
 exports.getTestById = async (req, res) => {
     try {
-        const test = await liveTest
+        const test = await LiveTest
             .findById(req.params.id)
             .populate('educatorId', 'name email')
             .populate('testSeriesId', 'title description')
@@ -135,7 +135,7 @@ exports.getTestsByEducator = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        const tests = await liveTest
+        const tests = await LiveTest
             .find({ educatorId })
             .populate('educatorId', 'name email')
             .populate('testSeriesId', 'title')
@@ -144,7 +144,7 @@ exports.getTestsByEducator = async (req, res) => {
             .skip(skip)
             .limit(limit);
 
-        const total = await liveTest.countDocuments({ educatorId });
+        const total = await LiveTest.countDocuments({ educatorId });
 
         res.status(200).json({
             tests,
@@ -170,7 +170,7 @@ exports.getTestsBySubject = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        const tests = await liveTest
+        const tests = await LiveTest
             .find({ subject })
             .populate('educatorId', 'name email')
             .populate('testSeriesId', 'title')
@@ -179,7 +179,7 @@ exports.getTestsBySubject = async (req, res) => {
             .skip(skip)
             .limit(limit);
 
-        const total = await liveTest.countDocuments({ subject });
+        const total = await LiveTest.countDocuments({ subject });
 
         res.status(200).json({
             tests,
@@ -205,7 +205,7 @@ exports.getTestsByMarkingType = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        const tests = await liveTest
+        const tests = await LiveTest
             .find({ markingType })
             .populate('educatorId', 'name email')
             .populate('testSeriesId', 'title')
@@ -214,7 +214,7 @@ exports.getTestsByMarkingType = async (req, res) => {
             .skip(skip)
             .limit(limit);
 
-        const total = await liveTest.countDocuments({ markingType });
+        const total = await LiveTest.countDocuments({ markingType });
 
         res.status(200).json({
             tests,
@@ -244,7 +244,7 @@ exports.getTestsByDateRange = async (req, res) => {
         if (startDate) dateFilter.$gte = new Date(startDate);
         if (endDate) dateFilter.$lte = new Date(endDate);
 
-        const tests = await liveTest
+        const tests = await LiveTest
             .find({ startDate: dateFilter })
             .populate('educatorId', 'name email')
             .populate('testSeriesId', 'title')
@@ -253,7 +253,7 @@ exports.getTestsByDateRange = async (req, res) => {
             .skip(skip)
             .limit(limit);
 
-        const total = await liveTest.countDocuments({ startDate: dateFilter });
+        const total = await LiveTest.countDocuments({ startDate: dateFilter });
 
         res.status(200).json({
             tests,
@@ -278,7 +278,7 @@ exports.updateTest = async (req, res) => {
         const educatorId = req.body.educatorId || req.user?.id;
 
         // Check if test exists and belongs to the educator
-        const existingTest = await liveTest.findById(testId);
+        const existingTest = await LiveTest.findById(testId);
         if (!existingTest) {
             return res.status(404).json({ message: "Live test not found" });
         }
@@ -289,7 +289,7 @@ exports.updateTest = async (req, res) => {
 
         const updateData = { ...req.body };
 
-        const updatedTest = await liveTest.findByIdAndUpdate(
+        const updatedTest = await LiveTest.findByIdAndUpdate(
             testId,
             updateData,
             { new: true, runValidators: true }
@@ -314,7 +314,7 @@ exports.deleteTest = async (req, res) => {
         const educatorId = req.body.educatorId || req.user?.id;
 
         // Check if test exists and belongs to the educator
-        const existingTest = await liveTest.findById(testId);
+        const existingTest = await LiveTest.findById(testId);
         if (!existingTest) {
             return res.status(404).json({ message: "Live test not found" });
         }
@@ -324,7 +324,7 @@ exports.deleteTest = async (req, res) => {
         }
 
         // Remove test from database
-        await liveTest.findByIdAndDelete(testId);
+        await LiveTest.findByIdAndDelete(testId);
 
         // Remove test from educator's liveTests array
         await educator.findByIdAndUpdate(educatorId, {
@@ -339,4 +339,44 @@ exports.deleteTest = async (req, res) => {
         }
         res.status(500).json({ message: error.message });
     }
+};
+
+exports.getLiveTestById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const liveTest = await LiveTest.findById(id)
+      .populate('educatorId', 'name email profileImage subject rating')
+      .populate('testSeriesId', 'title description')
+      .populate('questions');
+    
+    if (!liveTest) {
+      return res.status(404).json({ message: "Live test not found" });
+    }
+
+    return res.status(200).json(liveTest);
+  } catch (error) {
+    console.error("Error fetching live test by ID:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getLiveTestBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    
+    const liveTest = await LiveTest.findOne({ slug: slug })
+      .populate('educatorId', 'name email profileImage subject rating')
+      .populate('testSeriesId', 'title description')
+      .populate('questions');
+    
+    if (!liveTest) {
+      return res.status(404).json({ message: "Live test not found" });
+    }
+
+    return res.status(200).json(liveTest);
+  } catch (error) {
+    console.error("Error fetching live test by slug:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };

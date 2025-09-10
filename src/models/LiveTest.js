@@ -1,12 +1,23 @@
 const mongoose = require("mongoose");
 
+// Utility function to generate slug
+function generateSlug(title, id) {
+  const titlePart = title
+    .toLowerCase()
+    .trim()
+    .split(/\s+/)
+    .slice(0, 6)
+    .join("-");
+  const idPart = id ? id.toString().slice(-6) : Math.random().toString(36).substring(2, 8);
+  return `${titlePart}-${idPart}`;
+}
+
 const liveTestSchema = new mongoose.Schema(
   {
     title: {
       type: String,
       required: true,
       trim: true,
-      lowercase: true,
       unique: true,
     },
     description: {
@@ -72,10 +83,24 @@ const liveTestSchema = new mongoose.Schema(
       ref: "Educator",
       required: true,
     },
+    slug: {
+      type: String,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+// Pre-save hook for slug generation
+liveTestSchema.pre("save", function (next) {
+  if (!this.slug && this.title && this._id) {
+    this.slug = generateSlug(this.title, this._id);
+  }
+  next();
+});
 
 module.exports = mongoose.model("LiveTest", liveTestSchema);

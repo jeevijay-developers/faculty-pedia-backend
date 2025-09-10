@@ -22,6 +22,7 @@ const {
   getWebinarsBySpecialization,
   getWebinarsBySubject,
   getWebinarById,
+  getWebinarBySlug,
 } = require("../controllers/WebinarController");
 
 const router = require("express").Router();
@@ -96,5 +97,8 @@ router.get(
   validateRequests,
   getWebinarById
 );
+
+// Get webinar by slug
+router.get("/by-slug/:slug", verifyToken, getWebinarBySlug);
 
 module.exports = router;

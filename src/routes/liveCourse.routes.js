@@ -12,6 +12,7 @@ const {
   getCoursesBySpecialization,
   getCoursesBySubject,
   getCourseById,
+  getCourseBySlug,
   getAvailableOtoCourses,
 } = require("../controllers/LiveCourseController");
 
@@ -99,5 +100,8 @@ router.get(
 
 // Fetch all OTO type live courses with zero purchases
 router.get("/available-oto", verifyToken, getAvailableOtoCourses);
+
+// Get course by slug
+router.get("/slug/:slug", verifyToken, getCourseBySlug);
 
 module.exports = router;

@@ -8,7 +8,8 @@ const {
     getTestsByDateRange, 
     updateTest, 
     deleteTest 
-} = require("../../controllers/LiveTest/live-tests.controller")
+} = require("../../controllers/LiveTest/live-tests.controller");
+const { getLiveTestBySlug } = require("../../controllers/LiveTest/live-tests.controller");
 const { verifyToken } = require("../../middlewares/jwt.config");
 const { validateRequests } = require("../../middlewares/validateRequests.config");
 const { 
@@ -137,5 +138,6 @@ router.delete("/:id", verifyToken, [
     mongoIDChainBody("educatorId").optional(),
 ], validateRequests, deleteTest);
 
+router.get("/by-slug/:slug", verifyToken, getLiveTestBySlug);
 
 module.exports = router;

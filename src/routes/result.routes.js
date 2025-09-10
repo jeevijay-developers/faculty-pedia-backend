@@ -1,17 +1,14 @@
-const {
-  addNestTestSubmission,
-  getTestResults,
-} = require("../../controllers/LiveTest/resultController");
-const { verifyToken } = require("../../middlewares/jwt.config");
+const { getResultById, getResultBySlug, addNestTestSubmission, getTestResults } = require("../controllers/ResultController");
+const { verifyToken } = require("../middlewares/jwt.config");
 const {
   validateRequests,
-} = require("../../middlewares/validateRequests.config");
+} = require("../middlewares/validateRequests.config");
 const {
   mongoIDChainBody,
   numberChain,
   enumChain,
   stringChain,
-} = require("../../middlewares/validationChains");
+} = require("../middlewares/validationChains");
 
 const router = require("express").Router();
 
@@ -61,7 +58,19 @@ router.get(
     mongoIDChainBody("testId"),
   ],
   validateRequests,
-  getTestResults
+  getTestResults 
+);
+
+router.get(
+  "/:id",
+  verifyToken,
+  getResultById
+);
+
+router.get(
+  "/by-slug/:slug",
+  verifyToken,
+  getResultBySlug
 );
 
 module.exports = router;
