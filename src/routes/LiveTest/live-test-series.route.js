@@ -6,6 +6,7 @@ const {
   deleteTestSeries,
   getTestseriesBySpecialization,
   getTestseriesBySubject,
+  getLiveTestSeriesBySlug,
 } = require("../../controllers/LiveTest/live-test-series.controller");
 const { verifyToken } = require("../../middlewares/jwt.config");
 const {
@@ -132,5 +133,7 @@ router.delete(
   validateRequests,
   deleteTestSeries
 );
+
+router.get("/by-slug/:slug", verifyToken, getLiveTestSeriesBySlug);
 
 module.exports = router;

@@ -12,6 +12,7 @@ const {
   getCoursesBySpecialization,
   getCoursesBySubject,
   getCourseById,
+  getCourseBySlug,
   getAvailableOtoCourses,
   getAvailableOtoCoursesBySubject,
 } = require("../controllers/LiveCourseController");
@@ -112,5 +113,8 @@ router.get(
   validateRequests,
   getAvailableOtoCoursesBySubject
 );
+
+// Get course by slug
+router.get("/slug/:slug", verifyToken, getCourseBySlug);
 
 module.exports = router;

@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+
+
 const educatorSchema = new mongoose.Schema(
   {
     firstName: {
@@ -25,13 +27,19 @@ const educatorSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
       unique: true,
       lowercase: true,
     },
     image: {
       public_id: String,
       url: String,
+    },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
     payPerHourFees: {
       type: Number,
@@ -145,6 +153,15 @@ const educatorSchema = new mongoose.Schema(
 educatorSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 12);
+  }
+  next();
+});
+educatorSchema.pre("validate", async function (next) {
+  if (!this.slug) {
+    let baseSlug = `${this.firstName}-${this.lastName}`.toLowerCase().replace(/\s+/g, '-');
+    // If _id exists (on update), use it; otherwise, generate a random string
+    let uniquePart = this._id ? this._id.toString().slice(-6) : Math.random().toString(36).substring(2, 8);
+    this.slug = `${baseSlug}-${uniquePart}`;
   }
   next();
 });

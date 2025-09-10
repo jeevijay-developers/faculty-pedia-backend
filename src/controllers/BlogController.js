@@ -132,3 +132,23 @@ exports.getBlogById = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+exports.getBlogBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const blog = await Blog.findOne({ slug: slug }).populate(
+      "author",
+      "firstName lastName image.url"
+    );
+
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    res.status(200).json(blog);
+  } catch (error) {
+    console.error("Error fetching blog by slug:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

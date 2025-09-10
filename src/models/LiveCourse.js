@@ -1,6 +1,19 @@
 const mongoose = require("mongoose");
 const { parseDate } = require("../helpers/utilityFunctions");
 
+// Utility function to generate slug
+function generateSlug(title, id) {
+  // Take first 6 words of title, join with hyphens, and append last 6 chars of id
+  const titlePart = title
+    .toLowerCase()
+    .trim()
+    .split(/\s+/)
+    .slice(0, 6)
+    .join("-");
+  const idPart = id ? id.toString().slice(-6) : Math.random().toString(36).substring(2, 8);
+  return `${titlePart}-${idPart}`;
+}
+
 const courseSchema = new mongoose.Schema(
   {
     specialization: {
@@ -40,7 +53,6 @@ const courseSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      lowercase: true,
       trim: true,
     },
     description: {
@@ -102,10 +114,17 @@ const courseSchema = new mongoose.Schema(
         ref: "LiveTestSeries",
       },
     ],
+    slug: {
+      type: String,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
   },
   { timestamps: true }
 );
 
+// Pre-save hook for date validation and slug generation
 courseSchema.pre("save", function (next) {
   const START_DATE = parseDate(this.startDate);
   const END_DATE = parseDate(this.endDate);
@@ -125,6 +144,12 @@ courseSchema.pre("save", function (next) {
 
   this.startDate = START_DATE;
   this.endDate = END_DATE;
+
+  // Generate slug if not present
+  if (!this.slug && this.title && this._id) {
+    this.slug = generateSlug(this.title, this._id);
+  }
+
   next();
 });
 

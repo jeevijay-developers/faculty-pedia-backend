@@ -287,3 +287,43 @@ exports.getTestseriesBySubject = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+exports.getLiveTestSeriesById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const testSeries = await LiveTestSeries.findById(id)
+      .populate('educatorId', 'name email profileImage subject rating')
+      .populate('enrolledStudents.studentId', 'name email')
+      .populate('liveTests', 'title startDate duration');
+    
+    if (!testSeries) {
+      return res.status(404).json({ message: "Test series not found" });
+    }
+
+    return res.status(200).json(testSeries);
+  } catch (error) {
+    console.error("Error fetching test series by ID:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getLiveTestSeriesBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    
+    const testSeries = await LiveTestSeries.findOne({ slug: slug })
+      .populate('educatorId', 'name email profileImage subject rating')
+      .populate('enrolledStudents.studentId', 'name email')
+      .populate('liveTests', 'title startDate duration');
+    
+    if (!testSeries) {
+      return res.status(404).json({ message: "Test series not found" });
+    }
+
+    return res.status(200).json(testSeries);
+  } catch (error) {
+    console.error("Error fetching test series by slug:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

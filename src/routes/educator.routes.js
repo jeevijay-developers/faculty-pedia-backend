@@ -3,6 +3,7 @@ const {
   getEducatorsBySpecialization,
   getEducatorsBySubject,
   getEducatorById,
+  getEducatorBySlug,
 } = require("../controllers/EducatorController");
 
 const { verifyToken } = require("../middlewares/jwt.config");
@@ -53,6 +54,12 @@ router.get(
   [stringChain("subject", 2, 20)],
   validateRequests,
   getEducatorsBySubject
+);
+
+router.get(
+  "/slug/:slug",
+  verifyToken,
+  getEducatorBySlug
 );
 
 module.exports = router;

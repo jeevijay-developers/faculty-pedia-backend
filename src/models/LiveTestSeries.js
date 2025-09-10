@@ -1,11 +1,21 @@
 const mongoose = require("mongoose");
 
+function generateSlug(title, id) {
+  const titlePart = title
+    .toLowerCase()
+    .trim()
+    .split(/\s+/)
+    .slice(0, 6)
+    .join("-");
+  const idPart = id ? id.toString().slice(-6) : Math.random().toString(36).substring(2, 8);
+  return `${titlePart}-${idPart}`;
+}
+
 const testSeriesSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
     trim: true,
-    lowercase: true,
     unique: true,
   },
   description: {
@@ -80,6 +90,22 @@ const testSeriesSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Course",
   },
+  slug: {
+    type: String,
+    unique: true,
+    lowercase: true,
+    trim: true,
+  },
+}, {
+  timestamps: true,
+});
+
+// Pre-save hook for slug generation
+testSeriesSchema.pre("save", function (next) {
+  if (!this.slug && this.title && this._id) {
+    this.slug = generateSlug(this.title, this._id);
+  }
+  next();
 });
 
 module.exports = mongoose.model("LiveTestSeries", testSeriesSchema);

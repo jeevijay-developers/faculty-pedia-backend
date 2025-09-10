@@ -5,6 +5,7 @@ const {
   getBlogsBySpecialization,
   getBlogsBySubject,
   getBlogById,
+  getBlogBySlug,
 } = require("../controllers/BlogController");
 const { validateBlogTitle } = require("../middlewares/customValidator.config");
 const { verifyToken } = require("../middlewares/jwt.config");
@@ -57,5 +58,7 @@ router.get(
 router.get("/:id", verifyToken, [
   mongoIDChainParams("id")
 ], validateRequests, getBlogById);
+
+router.get("/slug/:slug", verifyToken, getBlogBySlug);
 
 module.exports = router;
