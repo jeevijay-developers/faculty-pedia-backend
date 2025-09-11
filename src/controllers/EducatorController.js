@@ -84,7 +84,6 @@ exports.getEducatorById = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 }
-
 exports.getEducatorBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
