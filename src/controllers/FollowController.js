@@ -80,3 +80,37 @@ exports.updateFollowerCount = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+exports.getFollowedEducators = async (req, res) => {
+  try {
+    const { studentid } = req.params;
+
+    if (!studentid) {
+      return res.status(400).json({ message: "Student ID is required." });
+    }
+
+    // Find student and populate followed educators
+    const student = await Student.findById(studentid)
+      .populate({
+        path: 'followingEducators',
+        select: 'name email specialization image bio experience rating totalFollowers',
+        populate: {
+          path: 'courses',
+          select: 'title'
+        }
+      });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found." });
+    }
+
+    return res.status(200).json({
+      message: "Followed educators retrieved successfully.",
+      followedEducators: student.followingEducators || []
+    });
+
+  } catch (error) {
+    console.error("Error getting followed educators:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
