@@ -4,6 +4,7 @@ const {
   getEducatorsBySubject,
   getEducatorById,
   getEducatorBySlug,
+  getAllEducators,
 } = require("../controllers/EducatorController");
 
 const { verifyToken } = require("../middlewares/jwt.config");
@@ -15,6 +16,13 @@ const {
 } = require("../middlewares/validationChains");
 
 const router = require("express").Router();
+
+// Get all educators with optional filters
+router.get(
+  "/all",
+  verifyToken,
+  getAllEducators
+);
 
 // Placeholder route
 router.put(
