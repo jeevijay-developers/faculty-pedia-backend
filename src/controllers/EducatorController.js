@@ -31,6 +31,40 @@ exports.updateEducatorStatus = async (req, res) => {
   }
 };
 
+exports.getAllEducators = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, subject, specialization } = req.query;
+    
+    let filter = { status: "active" };
+    
+    // Add filters if provided
+    if (subject) {
+      filter.subject = { $regex: subject, $options: 'i' };
+    }
+    if (specialization) {
+      filter.specialization = { $regex: specialization, $options: 'i' };
+    }
+
+    const educators = await Educator.find(filter)
+      .populate("followers")
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .sort({ createdAt: -1 });
+
+    const total = await Educator.countDocuments(filter);
+
+    return res.status(200).json({
+      educators,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+      total
+    });
+  } catch (error) {
+    console.error("Error fetching all educators:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 exports.getEducatorsBySpecialization = async (req, res) => {
   try {
     const { specialization } = req.body;
