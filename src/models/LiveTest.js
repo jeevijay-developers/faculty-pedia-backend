@@ -76,7 +76,7 @@ const liveTestSchema = new mongoose.Schema(
     ],
     testSeriesId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "TestSeries",
+      ref: "LiveTestSeries",
     },
     educatorId: {
       type: mongoose.Schema.Types.ObjectId,
