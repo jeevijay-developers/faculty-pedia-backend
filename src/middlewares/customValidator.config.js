@@ -3,10 +3,10 @@ const Educator = require("../models/Educator");
 const Student = require("../models/Student");
 const Webinar = require("../models/Webinar");
 exports.validateMobileNumber = async (value) => {
-  const mobileNumberPattern = /^\d{10}$/; // Example pattern for a 10-digit number
-  if (!mobileNumberPattern.test(value)) {
-    throw new Error("Invalid mobile number format");
-  }
+  // const mobileNumberPattern = /^\d{10}$/; // Example pattern for a 10-digit number
+  // if (!mobileNumberPattern.test(value)) {
+  //   throw new Error("Invalid mobile number format");
+  // }
 
   const student = await Student.findOne({ mobileNumber: value });
   if (student) {

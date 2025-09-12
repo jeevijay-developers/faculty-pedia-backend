@@ -38,29 +38,13 @@ const studentSchema = new mongoose.Schema({
 
   tests: [
     {
-      // liveTestId: {
-      //   type: mongoose.Schema.Types.ObjectId,
-      //   ref: "LiveTest",
-      // },
       testSeriesId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "TestSeries",
       },
-      // resultId: {
-      //   type: mongoose.Schema.Types.ObjectId,
-      //   ref: "Result",
-      // },
     },
   ],
-  // attendedTests: [
-  //   {
-  //     testId: {
-  //       type: mongoose.Schema.Types.ObjectId,
-  //       ref: "LiveTest",
-  //     },
-  //     seriesId: { type: mongoose.Schema.Types.ObjectId, ref: "LiveTestSeries" },
-  //   },
-  // ],
+
   results: [
     {
       // resultId: {
