@@ -5,6 +5,7 @@ const {
   getEducatorById,
   getEducatorBySlug,
   getAllEducators,
+  createSampleEducators,
 } = require("../controllers/EducatorController");
 
 const { verifyToken } = require("../middlewares/jwt.config");
@@ -22,6 +23,12 @@ router.get(
   "/all",
   verifyToken,
   getAllEducators
+);
+
+// Create sample educators (for testing)
+router.post(
+  "/create-samples",
+  createSampleEducators
 );
 
 // Placeholder route

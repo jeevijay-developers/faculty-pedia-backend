@@ -65,6 +65,85 @@ exports.getAllEducators = async (req, res) => {
   }
 };
 
+exports.createSampleEducators = async (req, res) => {
+  try {
+    // Check if educators already exist
+    const existingCount = await Educator.countDocuments();
+    if (existingCount > 0) {
+      return res.status(200).json({ 
+        message: "Sample educators already exist",
+        count: existingCount 
+      });
+    }
+
+    const sampleEducators = [
+      {
+        firstName: "suresh",
+        lastName: "nair",
+        password: await require("bcrypt").hash("password123", 10),
+        mobileNumber: "+919876543210",
+        email: "suresh.nair@example.com",
+        slug: "suresh-nair-physics",
+        bio: "Physics educator specializing in mechanics and thermodynamics for NEET students.",
+        specialization: "NEET",
+        subject: "Physics",
+        rating: 4.5,
+        status: "active",
+      },
+      {
+        firstName: "meera",
+        lastName: "sharma",
+        password: await require("bcrypt").hash("password123", 10),
+        mobileNumber: "+919876543211",
+        email: "meera.sharma@example.com",
+        slug: "meera-sharma-math",
+        bio: "Expert in algebra, calculus, and IIT-JEE coaching.",
+        specialization: "IIT-JEE",
+        subject: "Math",
+        rating: 4.8,
+        status: "active",
+      },
+      {
+        firstName: "anita",
+        lastName: "verma",
+        password: await require("bcrypt").hash("password123", 10),
+        mobileNumber: "+919876543212",
+        email: "anita.verma@example.com",
+        slug: "anita-verma-chemistry",
+        bio: "Specialist in organic and inorganic chemistry for JEE/NEET.",
+        specialization: "NEET",
+        subject: "Chemistry",
+        rating: 4.6,
+        status: "active",
+      },
+      {
+        firstName: "ankit",
+        lastName: "verma",
+        password: await require("bcrypt").hash("password123", 10),
+        mobileNumber: "+919876543213",
+        email: "ankit.verma@example.com",
+        slug: "ankit-verma-biology",
+        bio: "Specialist in Biology for NEET preparation.",
+        specialization: "NEET",
+        subject: "Biology",
+        rating: 4.6,
+        status: "active",
+      },
+    ];
+
+    const created = await Educator.insertMany(sampleEducators);
+    
+    return res.status(201).json({
+      message: "Sample educators created successfully",
+      count: created.length,
+      educators: created
+    });
+  } catch (error) {
+    console.error("Error creating sample educators:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 exports.getEducatorsBySpecialization = async (req, res) => {
   try {
     const { specialization } = req.body;
