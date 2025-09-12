@@ -82,7 +82,7 @@ router.post(
   getWebinarsBySpecialization
 );
 
-router.get(
+router.post(
   "/by-subject",
   verifyToken,
   [stringChain("subject", 2, 20)],
@@ -91,7 +91,7 @@ router.get(
 );
 
 router.get(
-  "/:id",
+  "/webinar-by-id/:id",
   verifyToken,
   [mongoIDChainParams("id")],
   validateRequests,
@@ -99,6 +99,17 @@ router.get(
 );
 
 // Get webinar by slug
-router.get("/by-slug/:slug", verifyToken, getWebinarBySlug);
+router.get(
+  "/by-slug/:slug",
+  verifyToken,
+  [
+    param("slug")
+      .trim()
+      .isLength({ min: 2, max: 100 })
+      .withMessage(`slug must be between 2 to 100 characters`),
+  ],
+  validateRequests,
+  getWebinarBySlug
+);
 
 module.exports = router;
