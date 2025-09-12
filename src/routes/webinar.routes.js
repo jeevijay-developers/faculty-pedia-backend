@@ -99,6 +99,17 @@ router.get(
 );
 
 // Get webinar by slug
-router.get("/by-slug/:slug", verifyToken, getWebinarBySlug);
+router.get(
+  "/by-slug/:slug",
+  verifyToken,
+  [
+    param("slug")
+      .trim()
+      .isLength({ min: 2, max: 100 })
+      .withMessage(`slug must be between 2 to 100 characters`),
+  ],
+  validateRequests,
+  getWebinarBySlug
+);
 
 module.exports = router;

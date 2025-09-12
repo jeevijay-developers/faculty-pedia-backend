@@ -48,18 +48,14 @@ router.get(
   validateRequests,
   getEducatorById
 );
-router.get(
-  "/by-subject",
-  verifyToken,
-  [stringChain("subject", 2, 20)],
-  validateRequests,
-  getEducatorsBySubject
-);
+// router.get(
+//   "/by-subject",
+//   verifyToken,
+//   [stringChain("subject", 2, 20)],
+//   validateRequests,
+//   getEducatorsBySubject
+// );
 
-router.get(
-  "/slug/:slug",
-  verifyToken,
-  getEducatorBySlug
-);
+router.get("/slug/:slug", verifyToken, getEducatorBySlug);
 
 module.exports = router;

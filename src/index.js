@@ -21,7 +21,7 @@ require("dotenv").config();
 // const
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
-  "PROD_ORIGIN",
+  "https://faculty-pedia-frontend.vercel.app",
   "ADMIN_ORIGIN",
   "TEST_ORIGIN",
 ];
