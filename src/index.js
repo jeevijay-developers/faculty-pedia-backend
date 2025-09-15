@@ -27,7 +27,7 @@ const ALLOWED_ORIGINS = [
   "ADMIN_ORIGIN",
   "TEST_ORIGIN",
 ];
-// CORS MANAGE
+// CORS MANAGE random
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin || ALLOWED_ORIGINS.includes(origin)) {
