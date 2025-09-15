@@ -29,7 +29,7 @@ const studentSchema = new mongoose.Schema({
   courses: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
+      ref: "LiveCourse",
     },
   ],
   followingEducators: [

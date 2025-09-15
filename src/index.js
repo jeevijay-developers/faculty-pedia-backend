@@ -15,6 +15,8 @@ const TEST_SERIES_ROUTES = require("./routes/LiveTest/live-test-series.route");
 const PAY_PER_HOUR_ROUTES = require("./routes/one-onePPH.route");
 const TEST_ROUTES = require("./routes/LiveTest/live-test.route");
 const RESULT_ROUTES = require("./routes/result.routes");
+// Student related (courses, results, following)
+const STUDENT_ROUTES = require("./routes/student.routes");
 
 const { connectDB } = require("./helpers/connectDB");
 require("dotenv").config();
@@ -54,6 +56,7 @@ APP.use("/api/questions", QUESTIONS_ROUTES);
 APP.use("/api/live-test", LIVE_TEST_ROUTES);
 APP.use("/api/test-series", TEST_SERIES_ROUTES);
 APP.use("/api/test", TEST_ROUTES);
+APP.use("/api/students", STUDENT_ROUTES);
 //? env imports
 const PORT = process.env.PORT;
 
