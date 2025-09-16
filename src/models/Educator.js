@@ -100,6 +100,10 @@ const educatorSchema = new mongoose.Schema(
         "CBSE",
       ],
     },
+    role: {
+      type: String,
+      default: "educator",
+    },
     subject: {
       type: String,
       trim: true,

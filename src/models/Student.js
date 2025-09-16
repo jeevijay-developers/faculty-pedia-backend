@@ -35,7 +35,10 @@ const studentSchema = new mongoose.Schema({
   followingEducators: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Educator" },
   ],
-
+  role: {
+    type: String,
+    default: "student",
+  },
   tests: [
     {
       testSeriesId: {
