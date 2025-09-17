@@ -56,4 +56,11 @@ const resultSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+resultSchema.pre("save", function (next) {
+  if (!this.slug) {
+    this.slug = `${this.studentId}-${this.testId}-${Date.now()}`;
+  }
+  next();
+});
+
 module.exports = mongoose.model("Result", resultSchema);
