@@ -15,6 +15,7 @@ const TEST_SERIES_ROUTES = require("./routes/LiveTest/live-test-series.route");
 const PAY_PER_HOUR_ROUTES = require("./routes/one-onePPH.route");
 const TEST_ROUTES = require("./routes/LiveTest/live-test.route");
 const RESULT_ROUTES = require("./routes/result.routes");
+const SUBSCRIBE_ROUTES = require("./routes/SubsRoute/Subs.route");
 // Student related (courses, results, following)
 const STUDENT_ROUTES = require("./routes/student.routes");
 
@@ -54,6 +55,7 @@ APP.use("/api/pay-per-hour", PAY_PER_HOUR_ROUTES);
 APP.use("/api/results", RESULT_ROUTES);
 APP.use("/api/questions", QUESTIONS_ROUTES);
 APP.use("/api/live-test", LIVE_TEST_ROUTES);
+APP.use("/api/subscribe", SUBSCRIBE_ROUTES);
 APP.use("/api/test-series", TEST_SERIES_ROUTES);
 APP.use("/api/test", TEST_ROUTES);
 APP.use("/api/students", STUDENT_ROUTES);
