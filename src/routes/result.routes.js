@@ -1,8 +1,11 @@
-const { getResultById, getResultBySlug, addNestTestSubmission, getTestResults } = require("../controllers/ResultController");
-const { verifyToken } = require("../middlewares/jwt.config");
 const {
-  validateRequests,
-} = require("../middlewares/validateRequests.config");
+  getResultById,
+  getResultBySlug,
+  addNestTestSubmission,
+  getTestResults,
+} = require("../controllers/ResultController");
+const { verifyToken } = require("../middlewares/jwt.config");
+const { validateRequests } = require("../middlewares/validateRequests.config");
 const {
   mongoIDChainBody,
   numberChain,
@@ -24,9 +27,7 @@ router.post(
     numberChain("totalIncorrect"),
     numberChain("totalCorrect"),
     numberChain("obtainedScore"),
-    mongoIDChainBody("attemptedQuestions.*.studentId"),
-    mongoIDChainBody("attemptedQuestions.*.testId"),
-    mongoIDChainBody("attemptedQuestions.*.testSeriesId"),
+    mongoIDChainBody("attemptedQuestions.*.questionId"),
     numberChain("attemptedQuestions.*.marks"),
     enumChain("attemptedQuestions.*.status", [
       "CORRECT",
@@ -58,19 +59,11 @@ router.get(
     mongoIDChainBody("testId"),
   ],
   validateRequests,
-  getTestResults 
+  getTestResults
 );
 
-router.get(
-  "/:id",
-  verifyToken,
-  getResultById
-);
+router.get("/:id", verifyToken, getResultById);
 
-router.get(
-  "/by-slug/:slug",
-  verifyToken,
-  getResultBySlug
-);
+router.get("/by-slug/:slug", verifyToken, getResultBySlug);
 
 module.exports = router;

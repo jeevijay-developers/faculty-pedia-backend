@@ -1,17 +1,19 @@
-const Result = require('../models/Result');
-const AttemptedQuestions = require('../models/AttemptedQuestions');
-const Student = require('../models/Student');
+const Result = require("../models/Result");
+const AttemptedQuestions = require("../models/AttemptedQuestions");
+const Student = require("../models/Student");
+const LiveTest = require("../models/LiveTest");
+const LiveTestSeries = require("../models/LiveTestSeries");
 
 exports.getResultById = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const result = await Result.findById(id)
-      .populate('studentId', 'name email')
-      .populate('seriesId', 'title description')
-      .populate('testId', 'title duration')
-      .populate('attemptedQuestions.questionId');
-    
+      .populate("studentId", "name email")
+      .populate("seriesId", "title description")
+      .populate("testId", "title duration")
+      .populate("attemptedQuestions.questionId");
+
     if (!result) {
       return res.status(404).json({ message: "Result not found" });
     }
@@ -26,13 +28,13 @@ exports.getResultById = async (req, res) => {
 exports.getResultBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
-    
+
     const result = await Result.findOne({ slug: slug })
-      .populate('studentId', 'name email')
-      .populate('seriesId', 'title description')
-      .populate('testId', 'title duration')
-      .populate('attemptedQuestions.questionId');
-    
+      .populate("studentId", "name email")
+      .populate("seriesId", "title description")
+      .populate("testId", "title duration")
+      .populate("attemptedQuestions.questionId");
+
     if (!result) {
       return res.status(404).json({ message: "Result not found" });
     }
@@ -64,6 +66,7 @@ exports.addNestTestSubmission = async (req, res) => {
     const isStudent = await Student.findById(studentId);
     const isTest = await LiveTest.findById(testId);
     const isSeries = await LiveTestSeries.findById(seriesId);
+    console.log(isStudent, isTest, isSeries);
 
     if (!isStudent || !isTest || !isSeries) {
       return res.status(400).json({ message: "Invalid IDs provided" });
