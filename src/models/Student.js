@@ -56,6 +56,12 @@ const studentSchema = new mongoose.Schema({
       // },
     },
   ],
+  webinars: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Webinar",
+    },
+  ],
 });
 
 studentSchema.pre("save", async function (next) {
