@@ -11,7 +11,9 @@ const signUpStudent = async (req, res) => {
       .status(201)
       .json({ message: "Student signed up successfully", student });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    console.log(error);
+    
+    res.status(500).json({ error: "Error in signUpStudent controller" });
   }
 };
 
