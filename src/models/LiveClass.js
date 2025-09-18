@@ -45,6 +45,14 @@ const liveClassSchema = new mongoose.Schema({
   liveClassLink: {
     type: String,
   },
+  enrolledStudents: [
+    {
+      studentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Student",
+      },
+    },
+  ],
   assetsLinks: [
     {
       name: { type: String, enum: ["PPT", "VIDEO", "PDF"] },
