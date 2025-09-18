@@ -81,7 +81,6 @@ exports.updateStudentProfile = async (req, res) => {
         name: isStudent.name,
         email: isStudent.email,
         mobileNumber: isStudent.mobileNumber,
-        profileImage: isStudent.image, // Map image to profileImage for frontend compatibility
         image: isStudent.image, // Also include original field name for backward compatibility
       }
     });
