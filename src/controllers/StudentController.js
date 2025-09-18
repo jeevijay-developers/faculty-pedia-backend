@@ -131,20 +131,15 @@ exports.getStudentUpcomingWebinars = async (req, res) => {
   }
 };
 
-// Get student's upcoming live test series (enrolled)
-exports.getStudentUpcomingTestSeries = async (req, res) => {
+// Get student's live test series (all)
+exports.getStudentTestSeries = async (req, res) => {
   try {
     const { id } = req.params;
-    const currentDate = new Date();
 
-    // Find student and populate test series that are upcoming
+    // Find student and populate all test series
     const student = await Student.findById(id)
       .populate({
         path: "tests.testSeriesId",
-        match: {
-          startDate: { $gte: currentDate }, // Only upcoming test series
-          status: "active", // Only active test series
-        },
         populate: {
           path: "educatorId",
           select: "firstName lastName image specialization",
@@ -156,19 +151,19 @@ exports.getStudentUpcomingTestSeries = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    // Filter out null test series and sort by start date
-    const upcomingTestSeries = student.tests
+    // Filter out null test series and sort by start date (latest first)
+    const testSeries = student.tests
       .filter((item) => item.testSeriesId !== null)
       .map((item) => item.testSeriesId)
-      .sort((a, b) => new Date(a.startDate) - new Date(b.startDate)); // Sort by start date ascending
+      .sort((a, b) => new Date(b.startDate) - new Date(a.startDate)); // Sort by start date descending (latest first)
 
     res.status(200).json({
       studentId: id,
-      upcomingTestSeries,
-      count: upcomingTestSeries.length,
+      testSeries,
+      count: testSeries.length,
     });
   } catch (error) {
-    console.error("Error fetching student upcoming test series:", error);
+    console.error("Error fetching student test series:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
