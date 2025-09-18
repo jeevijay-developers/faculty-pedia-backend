@@ -45,13 +45,23 @@ exports.attendWebinar = async (req, res) => {
   const webinarId = req.params.webId;
   const { studentId } = req.body;
 
+  if (!studentId) {
+    return res
+      .status(400)
+      .json({ message: "studentId is required in request body." });
+  }
+
   try {
     const webinar = await Webinar.findById(webinarId);
     if (!webinar) {
       return res.status(404).json({ message: "Webinar not found." });
     }
+    // console.log(studentId);
+
+    // console.log(webinar.enrolledStudents);
+
     const isEnrolled = webinar.enrolledStudents.some(
-      (student) => student.toString() === studentId
+      (student) => student.studentId.toString() === studentId
     );
     if (isEnrolled) {
       return res
@@ -69,7 +79,13 @@ exports.attendWebinar = async (req, res) => {
 
 exports.enrollWebinar = async (req, res) => {
   const webinarId = req.params.webId;
-  const studentId = req.body.studentId;
+  const studentId = req.body && req.body.studentId;
+
+  if (!studentId) {
+    return res
+      .status(400)
+      .json({ message: "studentId is required in request body." });
+  }
 
   try {
     const webinar = await Webinar.findById(webinarId);
@@ -130,11 +146,14 @@ exports.getWebinarsBySubject = async (req, res) => {
 exports.getWebinarById = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const webinar = await Webinar.findById(id)
-      .populate('educatorId', 'name email profileImage subject rating')
-      .populate('enrolledStudents', 'name email');
-    
+      .populate(
+        "educatorId",
+        "firstName lastName email image.url subject rating specialization"
+      )
+      .populate("enrolledStudents", "name email");
+
     if (!webinar) {
       return res.status(404).json({ message: "Webinar not found" });
     }
@@ -149,11 +168,11 @@ exports.getWebinarById = async (req, res) => {
 exports.getWebinarBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
-    
+
     const webinar = await Webinar.findOne({ slug: slug })
-      .populate('educatorId', 'name email profileImage subject rating')
-      .populate('enrolledStudents', 'name email');
-    
+      .populate("educatorId", "name email profileImage subject rating")
+      .populate("enrolledStudents", "name email");
+
     if (!webinar) {
       return res.status(404).json({ message: "Webinar not found" });
     }

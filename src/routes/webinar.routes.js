@@ -53,14 +53,15 @@ router.post(
   createNewWebinar
 );
 
-router.get(
+router.post(
   "/attend-webinar/:webId",
   verifyToken,
   [mongoIDChainParams("webId"), mongoIDChainBody("studentId")],
+  validateRequests,
   attendWebinar
 );
 
-router.get(
+router.post(
   "/enroll-webinar/:webId",
   verifyToken,
   [mongoIDChainParams("webId"), mongoIDChainBody("studentId")],

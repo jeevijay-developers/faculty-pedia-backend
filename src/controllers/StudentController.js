@@ -97,7 +97,25 @@ exports.getStudentFollowingEducators = async (req, res) => {
 exports.getStudentUpcomingWebinars = async (req, res) => {
   try {
     const { id } = req.params;
-    const currentDate = new Date();
+    const now = new Date();
+    const currentDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    ); // Start of current day in local timezone
+    console.log(
+      `Fetching upcoming webinars for student ID: ${id} at ${currentDate.toISOString()}`
+    );
+    console.log(
+      `Local time now: ${now.toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+      })}`
+    );
+    console.log(
+      `Using start of day: ${currentDate.toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+      })}`
+    );
 
     // Find student and populate webinars that are upcoming
     const student = await Student.findById(id)
@@ -115,10 +133,18 @@ exports.getStudentUpcomingWebinars = async (req, res) => {
       return res.status(404).json({ message: "Student not found" });
     }
 
+    console.log(
+      `Found ${student.webinars.length} total webinar references for student`
+    );
+
     // Filter out null webinars and sort by date
-    const upcomingWebinars = student.webinars
-      .filter((webinar) => webinar !== null)
-      .sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date ascending
+    const upcomingWebinars = student.webinars.filter(
+      (webinar) => webinar !== null
+    ); // Sort by date ascending
+
+    console.log(
+      `Found ${upcomingWebinars.length} upcoming webinars after filtering`
+    );
 
     res.status(200).json({
       studentId: id,
