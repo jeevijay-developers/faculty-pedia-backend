@@ -25,8 +25,6 @@ require("dotenv").config();
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "https://faculty-pedia-frontend.vercel.app",
-  "ADMIN_ORIGIN",
-  "TEST_ORIGIN",
 ];
 // CORS MANAGE random
 const corsOptions = {
@@ -38,8 +36,11 @@ const corsOptions = {
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
+
+APP.options(/.*/, cors(corsOptions));
 
 APP.use(cors(corsOptions));
 APP.use(express.json());

@@ -16,6 +16,8 @@ const {
   getStudentResults,
   getStudentFollowingEducators,
   getStudntProfile,
+  getStudentUpcomingWebinars,
+  getStudentTestSeries,
 } = require("../controllers/StudentController");
 const {
   updateStudentProfile,
@@ -85,6 +87,24 @@ router.put(
   ],
   validateRequests,
   updateStudentProfile
+);
+
+// GET /api/students/:id/upcoming-webinars
+router.get(
+  "/:id/upcoming-webinars",
+  verifyToken,
+  [mongoIDChainParams("id")],
+  validateRequests,
+  getStudentUpcomingWebinars
+);
+
+// GET /api/students/:id/test-series
+router.get(
+  "/:id/test-series",
+  verifyToken,
+  [mongoIDChainParams("id")],
+  validateRequests,
+  getStudentTestSeries
 );
 
 module.exports = router;

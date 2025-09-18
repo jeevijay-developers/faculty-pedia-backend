@@ -43,7 +43,7 @@ const studentSchema = new mongoose.Schema({
     {
       testSeriesId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "TestSeries",
+        ref: "LiveTestSeries",
       },
     },
   ],
