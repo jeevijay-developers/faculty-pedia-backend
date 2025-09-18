@@ -6,6 +6,8 @@ const {
   getStudentResults,
   getStudentFollowingEducators,
   getStudntProfile,
+  getStudentUpcomingWebinars,
+  getStudentUpcomingTestSeries,
 } = require("../controllers/StudentController");
 
 const router = require("express").Router();
@@ -43,6 +45,24 @@ router.get(
   [mongoIDChainParams("id")],
   validateRequests,
   getStudentFollowingEducators
+);
+
+// GET /api/students/:id/upcoming-webinars
+router.get(
+  "/:id/upcoming-webinars",
+  verifyToken,
+  [mongoIDChainParams("id")],
+  validateRequests,
+  getStudentUpcomingWebinars
+);
+
+// GET /api/students/:id/upcoming-test-series
+router.get(
+  "/:id/upcoming-test-series",
+  verifyToken,
+  [mongoIDChainParams("id")],
+  validateRequests,
+  getStudentUpcomingTestSeries
 );
 
 module.exports = router;
