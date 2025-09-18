@@ -99,27 +99,26 @@ exports.getStudentUpcomingWebinars = async (req, res) => {
     const { id } = req.params;
     const currentDate = new Date();
 
-    // Find student and populate enrolled webinars that are upcoming
+    // Find student and populate webinars that are upcoming
     const student = await Student.findById(id)
       .populate({
-        path: "enrolledWebinars.webinarId",
+        path: "webinars",
         match: { date: { $gte: currentDate } }, // Only upcoming webinars
         populate: {
           path: "educatorId",
           select: "firstName lastName image specialization",
         },
-        options: { sort: { date: 1 } }, // Sort by date ascending
       })
-      .select("enrolledWebinars");
+      .select("webinars");
 
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    // Filter out null webinars (those that didn't match the date criteria)
-    const upcomingWebinars = student.enrolledWebinars
-      .filter((item) => item.webinarId !== null)
-      .map((item) => item.webinarId);
+    // Filter out null webinars and sort by date
+    const upcomingWebinars = student.webinars
+      .filter((webinar) => webinar !== null)
+      .sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date ascending
 
     res.status(200).json({
       studentId: id,
@@ -138,10 +137,10 @@ exports.getStudentUpcomingTestSeries = async (req, res) => {
     const { id } = req.params;
     const currentDate = new Date();
 
-    // Find student and populate enrolled test series that are upcoming
+    // Find student and populate test series that are upcoming
     const student = await Student.findById(id)
       .populate({
-        path: "enrolledTestSeries.seriesId",
+        path: "tests.testSeriesId",
         match: {
           startDate: { $gte: currentDate }, // Only upcoming test series
           status: "active", // Only active test series
@@ -150,18 +149,18 @@ exports.getStudentUpcomingTestSeries = async (req, res) => {
           path: "educatorId",
           select: "firstName lastName image specialization",
         },
-        options: { sort: { startDate: 1 } }, // Sort by start date ascending
       })
-      .select("enrolledTestSeries");
+      .select("tests");
 
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    // Filter out null test series (those that didn't match the criteria)
-    const upcomingTestSeries = student.enrolledTestSeries
-      .filter((item) => item.seriesId !== null)
-      .map((item) => item.seriesId);
+    // Filter out null test series and sort by start date
+    const upcomingTestSeries = student.tests
+      .filter((item) => item.testSeriesId !== null)
+      .map((item) => item.testSeriesId)
+      .sort((a, b) => new Date(a.startDate) - new Date(b.startDate)); // Sort by start date ascending
 
     res.status(200).json({
       studentId: id,
