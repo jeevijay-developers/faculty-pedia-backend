@@ -29,11 +29,16 @@ exports.subscribeToCourse = async (req, res) => {
     student.courses.push(courseId);
     await student.save();
 
-    // Add student to course purchases (if not already present)
+    // Add student to course purchases and enrolledStudents (if not already present)
     if (!course.purchases.some(p => p.studentId.toString() === studentId)) {
       course.purchases.push({ studentId });
-      await course.save();
     }
+    
+    if (!course.enrolledStudents.some(e => e.studentId.toString() === studentId)) {
+      course.enrolledStudents.push({ studentId });
+    }
+    
+    await course.save();
 
     return res.status(200).json({ success: true, message: "Student enrolled in course successfully." });
   } catch (error) {
@@ -62,12 +67,19 @@ exports.subscribeToTestSeries = async (req, res) => {
     // Enroll student in test series
     student.tests.push({ testSeriesId });
     await student.save();
-    // Add student to test series purchases (if not already present)
+    
+    // Add student to test series purchases and enrolledStudents (if not already present)
     if (!testSeries.purchases?.some(p => p.studentId.toString() === studentId)) {
       if (!testSeries.purchases) testSeries.purchases = [];
       testSeries.purchases.push({ studentId });
-      await testSeries.save();
     }
+    
+    if (!testSeries.enrolledStudents?.some(e => e.studentId.toString() === studentId)) {
+      if (!testSeries.enrolledStudents) testSeries.enrolledStudents = [];
+      testSeries.enrolledStudents.push({ studentId });
+    }
+    
+    await testSeries.save();
     return res.status(200).json({ success: true, message: "Student enrolled in test series successfully." });
   } catch (error) {
     console.error("Error subscribing to test series:", error);
@@ -96,12 +108,19 @@ exports.subscribeToLiveClass = async (req, res) => {
     if (!student.liveClasses) student.liveClasses = [];
     student.liveClasses.push(liveClassId);
     await student.save();
-    // Add student to live class purchases (if not already present)
+    
+    // Add student to live class purchases and enrolledStudents (if not already present)
     if (!liveClass.purchases?.some(p => p.studentId.toString() === studentId)) {
       if (!liveClass.purchases) liveClass.purchases = [];
       liveClass.purchases.push({ studentId });
-      await liveClass.save();
     }
+    
+    if (!liveClass.enrolledStudents?.some(e => e.studentId.toString() === studentId)) {
+      if (!liveClass.enrolledStudents) liveClass.enrolledStudents = [];
+      liveClass.enrolledStudents.push({ studentId });
+    }
+    
+    await liveClass.save();
     return res.status(200).json({ success: true, message: "Student enrolled in live class successfully." });
   } catch (error) {
     console.error("Error subscribing to live class:", error);
@@ -109,8 +128,6 @@ exports.subscribeToLiveClass = async (req, res) => {
   }
 };
 
-// POST /api/subscribe-webinar
-// Body: { studentId, webinarId }
 exports.subscribeToWebinar = async (req, res) => {
   try {
     const { studentId, webinarId } = req.body;
@@ -130,12 +147,19 @@ exports.subscribeToWebinar = async (req, res) => {
     if (!student.webinars) student.webinars = [];
     student.webinars.push(webinarId);
     await student.save();
-    // Add student to webinar purchases (if not already present)
+    
+    // Add student to webinar purchases and enrolledStudents (if not already present)
     if (!webinar.purchases?.some(p => p.studentId.toString() === studentId)) {
       if (!webinar.purchases) webinar.purchases = [];
       webinar.purchases.push({ studentId });
-      await webinar.save();
     }
+    
+    if (!webinar.enrolledStudents?.some(e => e.studentId.toString() === studentId)) {
+      if (!webinar.enrolledStudents) webinar.enrolledStudents = [];
+      webinar.enrolledStudents.push({ studentId });
+    }
+    
+    await webinar.save();
     return res.status(200).json({ success: true, message: "Student enrolled in webinar successfully." });
   } catch (error) {
     console.error("Error subscribing to webinar:", error);

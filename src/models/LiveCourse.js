@@ -114,6 +114,14 @@ const courseSchema = new mongoose.Schema(
         ref: "LiveTestSeries",
       },
     ],
+    enrolledStudents: [
+      {
+        studentId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Student",
+        },
+      },
+    ],
     slug: {
       type: String,
       unique: true,
