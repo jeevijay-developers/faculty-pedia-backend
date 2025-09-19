@@ -15,6 +15,8 @@ const {
   getCourseBySlug,
   getAvailableOtoCourses,
   getAvailableOtoCoursesBySubject,
+  getCourseForStudent,
+  enrollStudentInCourse,
 } = require("../controllers/LiveCourseController");
 const { param } = require("express-validator");
 
@@ -84,6 +86,25 @@ router.get(
   validateRequests,
   getCoursesBySubject
 );
+
+// Get course for a student: /student/:studentId/course/:courseId
+router.get(
+  "/student-course/:studentId/course/:courseId",
+  verifyToken,
+  [mongoIDChainParams("studentId"), mongoIDChainParams("courseId")],
+  validateRequests,
+  getCourseForStudent
+);
+
+// Enroll student into a course
+router.post(
+  "/enroll-student/:studentId/course/:courseId/enroll",
+  verifyToken,
+  [mongoIDChainParams("studentId"), mongoIDChainParams("courseId")],
+  validateRequests,
+  enrollStudentInCourse
+);
+
 // Fetch all OTO type live courses with zero purchases
 router.get("/available-oto", verifyToken, getAvailableOtoCourses);
 router.get(

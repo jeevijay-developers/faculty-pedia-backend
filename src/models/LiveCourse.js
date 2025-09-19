@@ -10,7 +10,9 @@ function generateSlug(title, id) {
     .split(/\s+/)
     .slice(0, 6)
     .join("-");
-  const idPart = id ? id.toString().slice(-6) : Math.random().toString(36).substring(2, 8);
+  const idPart = id
+    ? id.toString().slice(-6)
+    : Math.random().toString(36).substring(2, 8);
   return `${titlePart}-${idPart}`;
 }
 
@@ -30,7 +32,7 @@ const courseSchema = new mongoose.Schema(
     subject: {
       type: String,
       trim: true,
-      lowercase: true
+      lowercase: true,
     },
     educatorId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -111,7 +113,7 @@ const courseSchema = new mongoose.Schema(
     tests: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "LiveTestSeries",
+        ref: "LiveTest",
       },
     ],
     enrolledStudents: [

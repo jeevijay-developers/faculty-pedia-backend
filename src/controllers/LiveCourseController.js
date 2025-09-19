@@ -1,5 +1,6 @@
 const LiveCourse = require("../models/LiveCourse");
 const Educator = require("../models/Educator");
+const Student = require("../models/Student");
 
 exports.createCourse = async (req, res) => {
   try {
@@ -162,12 +163,12 @@ exports.getCourseById = async (req, res) => {
 exports.getCourseBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
-    
+
     const course = await LiveCourse.findOne({ slug: slug })
-      .populate('educatorId', 'name email profileImage subject rating')
-      .populate('purchases.studentId', 'name email')
-      .populate('tests', 'title startDate duration');
-    
+      .populate("educatorId", "name email profileImage subject rating")
+      .populate("purchases.studentId", "name email")
+      .populate("tests", "title startDate duration");
+
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
@@ -206,5 +207,109 @@ exports.getAvailableOtoCoursesBySubject = async (req, res) => {
   } catch (error) {
     console.error("Error fetching available OTO courses:", error);
     return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+// Enroll a student into a live course
+exports.enrollStudentInCourse = async (req, res) => {
+  try {
+    const { studentId, courseId } = req.params;
+
+    // Check student exists
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found." });
+    }
+
+    // Check course exists
+    const course = await LiveCourse.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found." });
+    }
+
+    // Check if already enrolled
+    const alreadyEnrolled = course.enrolledStudents.some(
+      (s) => s.studentId && s.studentId.toString() === studentId
+    );
+    if (alreadyEnrolled) {
+      return res
+        .status(200)
+        .json({ message: "Student already enrolled in this course." });
+    }
+
+    // Check OTO constraint: only one student allowed
+    if (course.courseType === "OTO" && course.enrolledStudents.length >= 1) {
+      return res
+        .status(400)
+        .json({
+          message:
+            "This is a one-to-one (OTO) course and already has an enrolled student.",
+        });
+    }
+
+    // Check seat limit
+    if (course.enrolledStudents.length >= course.seatLimit) {
+      return res.status(400).json({ message: "Course seat limit reached." });
+    }
+
+    // Enroll student
+    course.enrolledStudents.push({ studentId });
+    await course.save();
+
+    // Also add course to student's courses array if not already
+    const hasCourse =
+      student.courses && student.courses.some((c) => c.toString() === courseId);
+    if (!hasCourse) {
+      student.courses = student.courses || [];
+      student.courses.push(courseId);
+      await student.save();
+    }
+
+    return res
+      .status(201)
+      .json({ message: "Student enrolled successfully.", courseId, studentId });
+  } catch (error) {
+    console.error("Error enrolling student in course:", error);
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid id(s) provided" });
+    }
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+// Get LiveCourse for a student after verifying enrollment
+exports.getCourseForStudent = async (req, res) => {
+  try {
+    const { studentId, courseId } = req.params;
+
+    // Verify student is enrolled in the course (enrolledStudents)
+    const enrolled = await LiveCourse.findOne({
+      _id: courseId,
+      "enrolledStudents.studentId": studentId,
+    }).select("_id");
+
+    if (!enrolled) {
+      return res
+        .status(403)
+        .json({ message: "User is not enrolled in this course." });
+    }
+
+    // Fetch the course with required populations
+    const course = await LiveCourse.findById(courseId)
+      .populate("educatorId", "firstName lastName image")
+      .populate("tests", "title description startDate duration")
+      .populate("classes");
+
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    return res.status(200).json(course);
+  } catch (error) {
+    console.error("Error fetching course for student:", error);
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid id(s) provided" });
+    }
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
