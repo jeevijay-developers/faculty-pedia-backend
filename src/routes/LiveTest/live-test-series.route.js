@@ -7,6 +7,7 @@ const {
   getTestseriesBySpecialization,
   getTestseriesBySubject,
   getLiveTestSeriesBySlug,
+  getLiveTestSeriesForStudent,
 } = require("../../controllers/LiveTest/live-test-series.controller");
 const { verifyToken } = require("../../middlewares/jwt.config");
 const {
@@ -23,6 +24,13 @@ const { query, body } = require("express-validator");
 
 const router = require("express").Router();
 
+// Get test series for a student (verify enrollment)
+router.get(
+  "/verify-and-get/:studentId/:seriesId",
+  [mongoIDChainParams("studentId"), mongoIDChainParams("seriesId")],
+  validateRequests,
+  getLiveTestSeriesForStudent
+);
 // Create test series
 router.post(
   "/by-specialization",
