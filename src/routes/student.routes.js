@@ -7,10 +7,7 @@ const {
   emailChain,
   mobileChain,
 } = require("../middlewares/validationChains");
-const {
-  validateEmail,
-  validateMobileNumber,
-} = require("../middlewares/customValidator.config");
+
 const {
   getStudentCourses,
   getStudentResults,
@@ -106,5 +103,6 @@ router.get(
   validateRequests,
   getStudentTestSeries
 );
+
 
 module.exports = router;

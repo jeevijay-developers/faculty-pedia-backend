@@ -21,7 +21,6 @@ const educatorSchema = new mongoose.Schema(
     mobileNumber: {
       type: String,
       required: true,
-      required: true,
       unique: true,
       trim: true,
     },
@@ -32,7 +31,10 @@ const educatorSchema = new mongoose.Schema(
     },
     image: {
       public_id: String,
-      url: String,
+      url: {
+        type: String,
+        default: "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+      },
     },
     slug: {
       type: String,
@@ -137,12 +139,6 @@ const educatorSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Question",
       }
-    ],
-    followers: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Student",
-      },
     ],
     yearsExperience: {
       type: Number,

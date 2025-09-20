@@ -108,7 +108,7 @@ router.post(
 // Fetch all OTO type live courses with zero purchases
 router.get("/available-oto", verifyToken, getAvailableOtoCourses);
 router.get(
-  "/:id",
+  "/by-id/:id",
   verifyToken,
   [mongoIDChainParams("id")],
   validateRequests,

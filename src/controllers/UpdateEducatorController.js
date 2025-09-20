@@ -1,4 +1,5 @@
 const Educator = require("../models/Educator");
+const { uploadToCloudinary } = require("../helpers/cloudinary");
 
 exports.updateNameEmailMobileNumberAndBio = async (req, res) => {
   try {
@@ -116,6 +117,61 @@ exports.updateSpecializationAndExperience = async (req, res) => {
       .json({ message: "Educator specialization updated successfully" });
   } catch (error) {
     console.error("Error updating educator specialization:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.updateEducatorImage = async (req, res) => {
+  try {
+    const { educatorId } = req.params;
+    const imageFile = req.file; // Get uploaded file from multer
+
+    // Check if educator exists
+    const educator = await Educator.findById(educatorId);
+    if (!educator) {
+      return res.status(404).json({ message: "Educator not found" });
+    }
+
+    // Check if image file is provided
+    if (!imageFile) {
+      return res.status(400).json({ message: "No image file provided" });
+    }
+
+    try {
+      // Upload image to Cloudinary
+      const uploadResult = await uploadToCloudinary(imageFile.buffer, imageFile.originalname);
+
+      // Update educator's image
+      educator.image = {
+        public_id: uploadResult.public_id,
+        url: uploadResult.url,
+      };
+
+      await educator.save();
+
+      res.status(200).json({
+        message: "Educator image updated successfully",
+        educator: {
+          _id: educator._id,
+          firstName: educator.firstName,
+          lastName: educator.lastName,
+          email: educator.email,
+          mobileNumber: educator.mobileNumber,
+          image: educator.image,
+          bio: educator.bio,
+          specialization: educator.specialization,
+          subject: educator.subject,
+          rating: educator.rating,
+          yearsExperience: educator.yearsExperience,
+          role: educator.role,
+        },
+      });
+    } catch (uploadError) {
+      console.error("Error uploading image to Cloudinary:", uploadError);
+      res.status(500).json({ message: "Failed to upload image" });
+    }
+  } catch (error) {
+    console.error("Error updating educator image:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

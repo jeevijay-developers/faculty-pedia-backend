@@ -16,8 +16,8 @@ const PAY_PER_HOUR_ROUTES = require("./routes/one-onePPH.route");
 const TEST_ROUTES = require("./routes/LiveTest/live-test.route");
 const RESULT_ROUTES = require("./routes/result.routes");
 const SUBSCRIBE_ROUTES = require("./routes/SubsRoute/Subs.route");
-// Student related (courses, results, following)
 const STUDENT_ROUTES = require("./routes/student.routes");
+const UPDATE_EDUCATOR_ROUTES = require("./routes/educatorUpdate.routes");
 
 const { connectDB } = require("./helpers/connectDB");
 require("dotenv").config();
@@ -49,6 +49,7 @@ APP.use("/api/auth", AUTH_ROUTES);
 APP.use("/api/follow", FOLLOW_ROUTES);
 APP.use("/api/course", COURSE_ROUTES);
 APP.use("/api/educator", EDUCATOR_ROUTES);
+APP.use("/api/educator-update", UPDATE_EDUCATOR_ROUTES);
 APP.use("/api/webinars", WEBINARS_ROUTES);
 APP.use("/api/blogs", BLOG_ROUTES);
 APP.use("/api/update", STUDENT_UPDATE_ROUTES);

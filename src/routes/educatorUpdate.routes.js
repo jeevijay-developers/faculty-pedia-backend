@@ -2,12 +2,16 @@ const {
   updateNameEmailMobileNumberAndBio,
   updateQualification,
   updateSocialLinks,
+  updateWorkExperience,
+  updateEducatorImage,
+  updateSpecializationAndExperience,
 } = require("../controllers/UpdateEducatorController");
 const {
   validateEmail,
   validateMobileNumber,
 } = require("../middlewares/customValidator.config");
 const { verifyToken } = require("../middlewares/jwt.config");
+const { uploadProfileImage } = require("../middlewares/multer.config");
 const { validateRequests } = require("../middlewares/validateRequests.config");
 const {
   stringChain,
@@ -16,12 +20,13 @@ const {
   arrayFieldChain,
   dateFieldChain,
   mongoIdChainInReqParams,
+  enumChain,
 } = require("../middlewares/validationChains");
 
 const router = require("express").Router();
 
 router.put(
-  "/educator/update-name-email-number-bio-ivlink/:educatorId",
+  "/update-name-email-number-bio-ivlink/:educatorId",
   verifyToken,
   [
     mongoIdChainInReqParams("educatorId"),
@@ -36,8 +41,18 @@ router.put(
   updateNameEmailMobileNumberAndBio
 );
 
+// Route for updating educator profile image
 router.put(
-  "/educator/update-work-experience/:educatorId",
+  "/update-image/:educatorId",
+  verifyToken,
+  uploadProfileImage, // Add multer middleware for image upload
+  [mongoIdChainInReqParams("educatorId")],
+  validateRequests,
+  updateEducatorImage
+);
+
+router.put(
+  "/update-work-experience/:educatorId",
   verifyToken,
   [
     mongoIdChainInReqParams("educatorId"),
@@ -50,7 +65,7 @@ router.put(
   updateWorkExperience
 );
 router.put(
-  "/educator/update-qualifications/:educatorId",
+  "/update-qualifications/:educatorId",
   verifyToken,
   [
     mongoIdChainInReqParams("educatorId"),
@@ -64,7 +79,7 @@ router.put(
 );
 
 router.put(
-  "/educator/update-social-links/:educatorId",
+  "/update-social-links/:educatorId",
   verifyToken,
   [
     mongoIdChainInReqParams("educatorId"),
@@ -79,7 +94,7 @@ router.put(
 );
 
 router.put(
-  "/educator/update-specialization-experience/:educatorId",
+  "/update-specialization-experience/:educatorId",
   verifyToken,
   [
     mongoIdChainInReqParams("educatorId"),
@@ -95,11 +110,7 @@ router.put(
     numberChain("yearsExperience", 0),
   ],
   validateRequests,
-  async (req, res) => {
-    res
-      .status(200)
-      .json({ message: "Educator qualification updated successfully" });
-  }
+  updateSpecializationAndExperience
 );
 
 module.exports = router;

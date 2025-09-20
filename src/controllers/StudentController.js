@@ -1,3 +1,4 @@
+const Educator = require("../models/Educator");
 const Student = require("../models/Student");
 
 exports.getStudntProfile = async (req, res) => {
