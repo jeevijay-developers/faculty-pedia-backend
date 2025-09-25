@@ -1,4 +1,5 @@
 const { verifyToken } = require("../middlewares/jwt.config");
+const { optionalAuth, requireAuth } = require("../middlewares/optionalAuth.config");
 const { validateRequests } = require("../middlewares/validateRequests.config");
 const {
   stringChain,
@@ -22,9 +23,10 @@ const { param } = require("express-validator");
 
 const router = require("express").Router();
 
+// EDUCATOR/ADMIN ROUTES - Authentication required
 router.post(
   "/create/:id",
-  verifyToken,
+  requireAuth,
   [
     // Validate educator ID in params
     mongoIDChainParams("id"),
@@ -66,14 +68,16 @@ router.post(
     numberChain("seatLimit", 1),
     numberChain("classDuration", 1),
     numberChain("fees", 0),
+    numberChain("validity", 1),
   ],
   validateRequests,
   createCourse
 );
 
+// BROWSING ROUTES - No authentication required
 router.post(
   "/by-specialization",
-  verifyToken,
+  optionalAuth,
   [stringChain("specialization", 2, 10)],
   validateRequests,
   getCoursesBySpecialization
@@ -81,49 +85,38 @@ router.post(
 
 router.get(
   "/by-subject",
-  verifyToken,
+  optionalAuth,
   [stringChain("subject", 2, 20)],
   validateRequests,
   getCoursesBySubject
 );
 
-// Get course for a student: /student/:studentId/course/:courseId
-router.get(
-  "/student-course/:studentId/course/:courseId",
-  verifyToken,
-  [mongoIDChainParams("studentId"), mongoIDChainParams("courseId")],
-  validateRequests,
-  getCourseForStudent
-);
-
-// Enroll student into a course
 router.post(
-  "/enroll-student/:studentId/course/:courseId/enroll",
-  verifyToken,
-  [mongoIDChainParams("studentId"), mongoIDChainParams("courseId")],
+  "/by-subject",
+  optionalAuth,
+  [stringChain("subject", 2, 20)],
   validateRequests,
-  enrollStudentInCourse
+  getCoursesBySubject
 );
 
-// Fetch all OTO type live courses with zero purchases
-router.get("/available-oto", verifyToken, getAvailableOtoCourses);
+// Get course by ID - for browsing course details
 router.get(
   "/by-id/:id",
-  verifyToken,
+  optionalAuth,
   [mongoIDChainParams("id")],
   validateRequests,
   getCourseById
 );
-router.post(
-  "/by-subject",
-  verifyToken,
-  [stringChain("subject", 2, 20)],
-  validateRequests,
-  getCoursesBySubject
-);
+
+// Get course by slug - for browsing course details
+router.get("/slug/:slug", optionalAuth, getCourseBySlug);
+
+// Fetch all OTO type live courses with zero purchases - for browsing
+router.get("/available-oto", optionalAuth, getAvailableOtoCourses);
+
 router.get(
   "/available-oto-by-subject/:subject",
-  verifyToken,
+  optionalAuth,
   [
     param("subject")
       .trim()
@@ -135,7 +128,23 @@ router.get(
   getAvailableOtoCoursesBySubject
 );
 
-// Get course by slug
-router.get("/slug/:slug", verifyToken, getCourseBySlug);
+// ENROLLMENT ROUTES - Authentication required
+// Get course for a student: /student/:studentId/course/:courseId
+router.get(
+  "/student-course/:studentId/course/:courseId",
+  requireAuth,
+  [mongoIDChainParams("studentId"), mongoIDChainParams("courseId")],
+  validateRequests,
+  getCourseForStudent
+);
+
+// Enroll student into a course
+router.post(
+  "/enroll-student/:studentId/course/:courseId/enroll",
+  requireAuth,
+  [mongoIDChainParams("studentId"), mongoIDChainParams("courseId")],
+  validateRequests,
+  enrollStudentInCourse
+);
 
 module.exports = router;

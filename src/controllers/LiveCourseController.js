@@ -27,6 +27,7 @@ exports.createCourse = async (req, res) => {
       seatLimit,
       classDuration,
       fees,
+      validity,
       videos,
     } = req.body;
 
@@ -65,6 +66,7 @@ exports.createCourse = async (req, res) => {
       seatLimit,
       classDuration,
       fees,
+      validity,
       slug,
       videos,
       purchases: [],
@@ -114,8 +116,19 @@ exports.getCoursesBySpecialization = async (req, res) => {
     if (!specialization) {
       return res.status(400).json({ message: "Specialization is required." });
     }
+    
+    // Calculate validity cutoff date
+    const now = new Date();
+    
     const courses = await LiveCourse.find({
       specialization: specialization,
+      // Only fetch courses that are still valid
+      $expr: {
+        $gte: [
+          { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+          now
+        ]
+      }
     }).populate("educatorId");
     return res.status(200).json({ courses });
   } catch (error) {
@@ -131,8 +144,20 @@ exports.getCoursesBySubject = async (req, res) => {
       return res.status(400).json({ message: "Subject is required." });
     }
 
-    // Find courses taught by these educators
-    const courses = await LiveCourse.find({ subject: subject });
+    // Calculate validity cutoff date
+    const now = new Date();
+
+    // Find courses taught by these educators that are still valid
+    const courses = await LiveCourse.find({ 
+      subject: subject,
+      // Only fetch courses that are still valid
+      $expr: {
+        $gte: [
+          { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+          now
+        ]
+      }
+    });
     return res.status(200).json({ courses });
   } catch (error) {
     console.error("Error fetching courses by subject:", error);
@@ -151,6 +176,14 @@ exports.getCourseById = async (req, res) => {
 
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
+    }
+
+    // Check if course is still valid
+    const now = new Date();
+    const validUntil = new Date(course.createdAt.getTime() + (course.validity * 24 * 60 * 60 * 1000));
+    
+    if (now > validUntil) {
+      return res.status(410).json({ message: "Course validity has expired" });
     }
 
     return res.status(200).json(course);
@@ -173,6 +206,14 @@ exports.getCourseBySlug = async (req, res) => {
       return res.status(404).json({ message: "Course not found" });
     }
 
+    // Check if course is still valid
+    const now = new Date();
+    const validUntil = new Date(course.createdAt.getTime() + (course.validity * 24 * 60 * 60 * 1000));
+    
+    if (now > validUntil) {
+      return res.status(410).json({ message: "Course validity has expired" });
+    }
+
     return res.status(200).json(course);
   } catch (error) {
     console.error("Error fetching course by slug:", error);
@@ -183,9 +224,19 @@ exports.getCourseBySlug = async (req, res) => {
 // Get all OTO (one-to-one) courses that have zero purchases
 exports.getAvailableOtoCourses = async (req, res) => {
   try {
+    // Calculate validity cutoff date
+    const now = new Date();
+    
     const courses = await LiveCourse.find({
       courseType: "OTO",
       purchases: { $size: 0 },
+      // Only fetch courses that are still valid
+      $expr: {
+        $gte: [
+          { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+          now
+        ]
+      }
     }).populate("educatorId");
 
     return res.status(200).json({ courses });
@@ -197,10 +248,20 @@ exports.getAvailableOtoCourses = async (req, res) => {
 exports.getAvailableOtoCoursesBySubject = async (req, res) => {
   try {
     const { subject } = req.params;
+    // Calculate validity cutoff date
+    const now = new Date();
+    
     const courses = await LiveCourse.find({
       courseType: "OTO",
       subject: subject,
       purchases: { $size: 0 },
+      // Only fetch courses that are still valid
+      $expr: {
+        $gte: [
+          { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+          now
+        ]
+      }
     }).populate("educatorId");
 
     return res.status(200).json({ courses });

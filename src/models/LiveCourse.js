@@ -96,6 +96,12 @@ const courseSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    validity: {
+      type: Number,
+      required: true,
+      min: 1,
+      default: 30, // Default validity in days
+    },
     videos: {
       intro: {
         type: String,

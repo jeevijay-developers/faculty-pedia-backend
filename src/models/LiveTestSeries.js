@@ -32,6 +32,12 @@ const testSeriesSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  validity: {
+    type: Number,
+    required: true,
+    min: 1,
+    default: 30, // Default validity in days
+  },
   noOfTests: {
     type: Number,
     required: true,

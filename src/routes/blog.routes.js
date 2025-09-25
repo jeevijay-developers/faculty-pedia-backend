@@ -9,6 +9,7 @@ const {
 } = require("../controllers/BlogController");
 const { validateBlogTitle } = require("../middlewares/customValidator.config");
 const { verifyToken } = require("../middlewares/jwt.config");
+const { optionalAuth, requireAuth } = require("../middlewares/optionalAuth.config");
 const { validateRequests } = require("../middlewares/validateRequests.config");
 const {
   stringChain,
@@ -20,9 +21,35 @@ const {
 
 const router = require("express").Router();
 
+// BROWSING ROUTES - No authentication required
+router.get("/get-all-blogs", optionalAuth, getAllBlogs);
+router.get("/get-latest-blogs", optionalAuth, getLatestBlogs);
+router.post(
+  "/by-specialization",
+  optionalAuth,
+  [stringChain("specialization", 2, 10)],
+  validateRequests,
+  getBlogsBySpecialization
+);
+
+router.get(
+  "/by-subject",
+  optionalAuth,
+  [stringChain("subject", 2, 20)],
+  validateRequests,
+  getBlogsBySubject
+);
+
+router.get("/:id", optionalAuth, [
+  mongoIDChainParams("id")
+], validateRequests, getBlogById);
+
+router.get("/slug/:slug", optionalAuth, getBlogBySlug);
+
+// ADMIN/CREATION ROUTES - Authentication required
 router.post(
   "/create-blog",
-  verifyToken,
+  requireAuth,
   [
     // Add validation chains here
     stringChain("title").custom(validateBlogTitle),
@@ -36,29 +63,5 @@ router.post(
   validateRequests,
   createNewBlog
 );
-
-router.get("/get-all-blogs", verifyToken, getAllBlogs);
-router.get("/get-latest-blogs", verifyToken, getLatestBlogs);
-router.post(
-  "/by-specialization",
-  verifyToken,
-  [stringChain("specialization", 2, 10)],
-  validateRequests,
-  getBlogsBySpecialization
-);
-
-router.get(
-  "/by-subject",
-  verifyToken,
-  [stringChain("subject", 2, 20)],
-  validateRequests,
-  getBlogsBySubject
-);
-
-router.get("/:id", verifyToken, [
-  mongoIDChainParams("id")
-], validateRequests, getBlogById);
-
-router.get("/slug/:slug", verifyToken, getBlogBySlug);
 
 module.exports = router;

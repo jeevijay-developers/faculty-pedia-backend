@@ -3,6 +3,7 @@ const {
   validateWebinarTitle,
 } = require("../middlewares/customValidator.config");
 const { verifyToken } = require("../middlewares/jwt.config");
+const { optionalAuth, requireAuth } = require("../middlewares/optionalAuth.config");
 const { validateRequests } = require("../middlewares/validateRequests.config");
 const {
   stringChain,
@@ -53,31 +54,17 @@ router.post(
   createNewWebinar
 );
 
-router.post(
-  "/attend-webinar/:webId",
-  verifyToken,
-  [mongoIDChainParams("webId"), mongoIDChainBody("studentId")],
-  validateRequests,
-  attendWebinar
-);
-
-router.post(
-  "/enroll-webinar/:webId",
-  verifyToken,
-  [mongoIDChainParams("webId"), mongoIDChainBody("studentId")],
-  enrollWebinar
-);
-
+// BROWSING ROUTES - No authentication required
 router.get(
   "/latest-webinars",
-  verifyToken,
+  optionalAuth,
   validateRequests,
   getAllUpcommingWebinars
 );
 
 router.post(
   "/by-specialization",
-  verifyToken,
+  optionalAuth,
   [stringChain("specialization", 2, 10)],
   validateRequests,
   getWebinarsBySpecialization
@@ -85,7 +72,7 @@ router.post(
 
 router.post(
   "/by-subject",
-  verifyToken,
+  optionalAuth,
   [stringChain("subject", 2, 20)],
   validateRequests,
   getWebinarsBySubject
@@ -93,16 +80,16 @@ router.post(
 
 router.get(
   "/webinar-by-id/:id",
-  verifyToken,
+  optionalAuth,
   [mongoIDChainParams("id")],
   validateRequests,
   getWebinarById
 );
 
-// Get webinar by slug
+// Get webinar by slug - for browsing details
 router.get(
   "/by-slug/:slug",
-  verifyToken,
+  optionalAuth,
   [
     param("slug")
       .trim()
@@ -111,6 +98,22 @@ router.get(
   ],
   validateRequests,
   getWebinarBySlug
+);
+
+// ENROLLMENT/PARTICIPATION ROUTES - Authentication required
+router.post(
+  "/attend-webinar/:webId",
+  requireAuth,
+  [mongoIDChainParams("webId"), mongoIDChainBody("studentId")],
+  validateRequests,
+  attendWebinar
+);
+
+router.post(
+  "/enroll-webinar/:webId",
+  requireAuth,
+  [mongoIDChainParams("webId"), mongoIDChainBody("studentId")],
+  enrollWebinar
 );
 
 module.exports = router;

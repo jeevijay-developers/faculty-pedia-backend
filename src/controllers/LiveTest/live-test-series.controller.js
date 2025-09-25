@@ -12,6 +12,7 @@ exports.createTestSeries = async (req, res) => {
       specialization,
       subject,
       price,
+      validity,
       noOfTests,
       startDate,
       endDate,
@@ -33,6 +34,7 @@ exports.createTestSeries = async (req, res) => {
       title,
       description,
       price,
+      validity,
       noOfTests,
       startDate,
       specialization,
@@ -107,6 +109,15 @@ exports.getAllTestSeries = async (req, res) => {
       filter.price = { ...filter.price, $lte: parseFloat(req.query.maxPrice) };
     }
 
+    // Add validity filter - only fetch test series that are still valid
+    const now = new Date();
+    filter.$expr = {
+      $gte: [
+        { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+        now
+      ]
+    };
+
     const testSeries = await LiveTestSeries.find(filter)
       .populate("educatorId", "firstName lastName email specialization image")
       .populate("courseId", "title description")
@@ -147,6 +158,14 @@ exports.getTestSeriesById = async (req, res) => {
 
     if (!testSeries) {
       return res.status(404).json({ message: "Test series not found" });
+    }
+
+    // Check if test series is still valid
+    const now = new Date();
+    const validUntil = new Date(testSeries.createdAt.getTime() + (testSeries.validity * 24 * 60 * 60 * 1000));
+    
+    if (now > validUntil) {
+      return res.status(410).json({ message: "Test series validity has expired" });
     }
 
     res.status(200).json(testSeries);
@@ -262,8 +281,18 @@ exports.getTestseriesBySpecialization = async (req, res) => {
       return res.status(400).json({ message: "Specialization is required." });
     }
 
+    // Calculate validity cutoff date
+    const now = new Date();
+
     const testSeries = await LiveTestSeries.find({
       specialization: specialization,
+      // Only fetch test series that are still valid
+      $expr: {
+        $gte: [
+          { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+          now
+        ]
+      }
     }).populate("educatorId");
     return res.status(200).json({ testSeries });
   } catch (error) {
@@ -278,8 +307,19 @@ exports.getTestseriesBySubject = async (req, res) => {
     if (!subject) {
       return res.status(400).json({ message: "Subject is required." });
     }
+    
+    // Calculate validity cutoff date
+    const now = new Date();
+    
     const testSeries = await LiveTestSeries.find({
       subject: subject,
+      // Only fetch test series that are still valid
+      $expr: {
+        $gte: [
+          { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+          now
+        ]
+      }
     }).populate("educatorId", "name profileImage subject rating");
     return res.status(200).json({ testSeries });
   } catch (error) {
@@ -301,6 +341,14 @@ exports.getLiveTestSeriesById = async (req, res) => {
       return res.status(404).json({ message: "Test series not found" });
     }
 
+    // Check if test series is still valid
+    const now = new Date();
+    const validUntil = new Date(testSeries.createdAt.getTime() + (testSeries.validity * 24 * 60 * 60 * 1000));
+    
+    if (now > validUntil) {
+      return res.status(410).json({ message: "Test series validity has expired" });
+    }
+
     return res.status(200).json(testSeries);
   } catch (error) {
     console.error("Error fetching test series by ID:", error);
@@ -319,6 +367,14 @@ exports.getLiveTestSeriesBySlug = async (req, res) => {
 
     if (!testSeries) {
       return res.status(404).json({ message: "Test series not found" });
+    }
+
+    // Check if test series is still valid
+    const now = new Date();
+    const validUntil = new Date(testSeries.createdAt.getTime() + (testSeries.validity * 24 * 60 * 60 * 1000));
+    
+    if (now > validUntil) {
+      return res.status(410).json({ message: "Test series validity has expired" });
     }
 
     return res.status(200).json(testSeries);
