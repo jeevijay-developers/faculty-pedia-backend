@@ -73,6 +73,8 @@ const loginEducator = async (req, res) => {
       return res
         .status(200)
         .json({ message: "Login successful", educator, TOKEN });
+    }else{
+      return res.status(400).json({ message: "Invalid email or password" });
     }
   } catch (error) {
     console.log(error);

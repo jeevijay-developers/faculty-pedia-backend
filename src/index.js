@@ -23,8 +23,8 @@ const { connectDB } = require("./helpers/connectDB");
 require("dotenv").config();
 // const
 const ALLOWED_ORIGINS = [
-  "http://localhost:3000",
-  "https://faculty-pedia-frontend.vercel.app",
+  process.env.NEXT_PUBLIC_DASHBOARD_URL,
+  process.env.NEXT_PUBLIC_FRONTEND_URL,
 ];
 // CORS MANAGE random
 const corsOptions = {
