@@ -90,11 +90,9 @@ const getCurrentEducator = async (req, res) => {
     
     const educator = await Educator.findById(educatorId)
       .select('-password'); // Exclude password from response
-    
     if (!educator) {
       return res.status(404).json({ message: "Educator not found" });
     }
-    
     return res.status(200).json({ educator });
   } catch (error) {
     console.log(error);
