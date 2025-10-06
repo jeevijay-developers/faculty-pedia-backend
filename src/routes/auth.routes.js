@@ -4,6 +4,7 @@ const {
   signUpEducator,
   loginStudent,
   loginEducator,
+  getCurrentEducator,
 } = require("../controllers/AuthController");
 const {
   emailChain,
@@ -20,6 +21,7 @@ const {
   validateMobileNumber,
 } = require("../middlewares/customValidator.config");
 const { validateRequests } = require("../middlewares/validateRequests.config");
+const { verifyToken } = require("../middlewares/jwt.config");
 
 const router = require("express").Router();
 
@@ -71,4 +73,12 @@ router.post(
   validateRequests,
   loginEducator
 );
+
+// Get current educator profile (protected route)
+router.get(
+  "/educator/me",
+  verifyToken,
+  getCurrentEducator
+);
+
 module.exports = router;

@@ -83,4 +83,29 @@ const loginEducator = async (req, res) => {
   }
 };
 
-module.exports = { signUpStudent, signUpEducator, loginStudent, loginEducator };
+const getCurrentEducator = async (req, res) => {
+  try {
+    // req.user is set by verifyToken middleware
+    const educatorId = req.user.userid;
+    
+    const educator = await Educator.findById(educatorId)
+      .select('-password'); // Exclude password from response
+    
+    if (!educator) {
+      return res.status(404).json({ message: "Educator not found" });
+    }
+    
+    return res.status(200).json({ educator });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+module.exports = { 
+  signUpStudent, 
+  signUpEducator, 
+  loginStudent, 
+  loginEducator,
+  getCurrentEducator 
+};

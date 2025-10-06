@@ -16,6 +16,7 @@ const verifyToken = (req, res, next) => {
       const TOKEN = token.slice(7, token.length).trimLeft();
 
       const decoded = jwt.verify(TOKEN, process.env.JWT_SECRET);
+      req.user = decoded; // Attach decoded user data to request
       next();
     } else {
       return res.status(401).json({ error: "Invalid token format" });
