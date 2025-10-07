@@ -18,7 +18,7 @@ exports.createTest = async (req, res) => {
     } = req.body;
 
     // Create new live test
-    const newLiveTest = new liveTest({
+    const newLiveTest = new LiveTest({
       title,
       description,
       subject,
