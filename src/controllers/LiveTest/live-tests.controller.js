@@ -39,6 +39,13 @@ exports.createTest = async (req, res) => {
       $push: { liveTests: newLiveTest._id },
     });
 
+    // const isTitleExists = await LiveTest.findOne({ title });
+    // if (isTitleExists) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "A test with this title already exists." });
+    // }
+
     // Populate the response with related data
     const populatedTest = await LiveTest.findById(newLiveTest._id)
       .populate("educatorId", "name email")
@@ -50,6 +57,12 @@ exports.createTest = async (req, res) => {
     console.error("Error creating live test:", error);
     if (error.name === "ValidationError") {
       return res.status(400).json({ message: error.message });
+    }
+    if (error.code === 11000) {
+      // Duplicate key error
+      return res
+        .status(400)
+        .json({ message: "A test with this title already exists." });
     }
     res.status(500).json({ message: error.message });
   }
