@@ -1,6 +1,7 @@
 const LiveTestSeries = require("../../models/LiveTestSeries");
 const Educator = require("../../models/Educator");
 const LiveTest = require("../../models/LiveTest");
+const { uploadToCloudinary } = require("../../helpers/cloudinary");
 
 // Create Test Series
 exports.createTestSeries = async (req, res) => {
@@ -29,6 +30,19 @@ exports.createTestSeries = async (req, res) => {
       });
     }
 
+    // Handle image upload if provided
+    let imageData = null;
+    if (req.file) {
+      try {
+        imageData = await uploadToCloudinary(req.file.buffer);
+      } catch (uploadError) {
+        console.error("Error uploading image to Cloudinary:", uploadError);
+        return res.status(500).json({
+          message: "Failed to upload image. Please try again.",
+        });
+      }
+    }
+
     // Create new test series
     const newTestSeries = new LiveTestSeries({
       title,
@@ -45,6 +59,7 @@ exports.createTestSeries = async (req, res) => {
       educatorId: educatorId,
       isCourseSpecific: isCourseSpecific || false,
       courseId: isCourseSpecific ? courseId : undefined,
+      ...(imageData && { image: imageData }),
     });
 
     await newTestSeries.save();

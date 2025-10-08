@@ -22,6 +22,7 @@ const {
   dateFieldChain,
 } = require("../../middlewares/validationChains");
 const { query, body } = require("express-validator");
+const { uploadSingleImage } = require("../../middlewares/multer.config");
 
 const router = require("express").Router();
 
@@ -86,6 +87,7 @@ router.get(
 router.post(
   "/create-test-series",
   requireAuth,
+  uploadSingleImage,
   [
     mongoIDChainBody("educatorId"),
     stringChain("title", 3, 200),
