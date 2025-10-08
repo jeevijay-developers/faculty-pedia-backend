@@ -1,6 +1,7 @@
 const LiveCourse = require("../models/LiveCourse");
 const Educator = require("../models/Educator");
 const Student = require("../models/Student");
+const { uploadToCloudinary } = require("../helpers/cloudinary");
 
 exports.createCourse = async (req, res) => {
   try {
@@ -17,7 +18,6 @@ exports.createCourse = async (req, res) => {
       specialization,
       courseClass,
       subject,
-      image,
       title,
       slug,
       description,
@@ -48,13 +48,40 @@ exports.createCourse = async (req, res) => {
       });
     }
 
+    let uploadedImage = null;
+
+    if (req.file) {
+      try {
+        uploadedImage = await uploadToCloudinary(req.file.buffer);
+      } catch (error) {
+        console.error("Error uploading course image:", error);
+        return res.status(500).json({
+          message: "Failed to upload course image",
+        });
+      }
+    }
+
+    const numericSeatLimit = seatLimit !== undefined ? Number(seatLimit) : undefined;
+    const numericClassDuration = classDuration !== undefined ? Number(classDuration) : undefined;
+    const numericFees = fees !== undefined ? Number(fees) : undefined;
+    const numericValidity = validity !== undefined ? Number(validity) : undefined;
+
+    const courseVideos = {
+      intro: videos?.intro ?? "",
+      descriptionVideo: videos?.descriptionVideo ?? "",
+    };
+
+    if (Array.isArray(videos?.lessons)) {
+      courseVideos.lessons = videos.lessons;
+    }
+
     // Create new course
     const newCourse = new LiveCourse({
       specialization,
       courseClass,
       educatorId,
       subject,
-      image,
+      image: uploadedImage || undefined,
       title,
       description: {
         shortDesc: description.shortDesc,
@@ -63,12 +90,12 @@ exports.createCourse = async (req, res) => {
       courseType,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
-      seatLimit,
-      classDuration,
-      fees,
-      validity,
+      seatLimit: numericSeatLimit,
+      classDuration: numericClassDuration,
+      fees: numericFees,
+      validity: numericValidity,
       slug,
-      videos,
+      videos: courseVideos,
       purchases: [],
       classes: [],
       tests: [],

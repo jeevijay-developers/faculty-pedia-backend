@@ -20,13 +20,29 @@ const {
   enrollStudentInCourse,
 } = require("../controllers/LiveCourseController");
 const { param } = require("express-validator");
+const { uploadSingleImage } = require("../middlewares/multer.config");
 
 const router = require("express").Router();
+
+const parseCoursePayload = (req, res, next) => {
+  if (req.body && req.body.data) {
+    try {
+      const parsed = JSON.parse(req.body.data);
+      Object.assign(req.body, parsed);
+      delete req.body.data;
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid course payload" });
+    }
+  }
+  next();
+};
 
 // EDUCATOR/ADMIN ROUTES - Authentication required
 router.post(
   "/create/:id",
   requireAuth,
+  uploadSingleImage,
+  parseCoursePayload,
   [
     // Validate educator ID in params
     mongoIDChainParams("id"),

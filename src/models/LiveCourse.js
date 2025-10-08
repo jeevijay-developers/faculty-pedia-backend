@@ -154,8 +154,14 @@ courseSchema.pre("save", function (next) {
     return next(new Error("Invalid class date"));
   }
 
-  if (START_DATE <= new Date()) {
-    return next(new Error("Class date must be in the future"));
+  const now = new Date();
+
+  if (START_DATE <= now) {
+    return next(new Error("Start date must be in the future"));
+  }
+
+  if (END_DATE <= START_DATE) {
+    return next(new Error("End date must be after the start date"));
   }
 
   this.startDate = START_DATE;
