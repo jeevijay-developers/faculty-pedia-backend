@@ -285,7 +285,7 @@ exports.getTestsByDateRange = async (req, res) => {
 exports.updateTest = async (req, res) => {
   try {
     const testId = req.params.id;
-    const educatorId = req.body.educatorId || req.user?.id;
+    const educatorId = req.user.userid; // From auth middleware (JWT payload uses 'userid')
 
     // Check if test exists and belongs to the educator
     const existingTest = await LiveTest.findById(testId);
@@ -323,7 +323,7 @@ exports.updateTest = async (req, res) => {
 exports.deleteTest = async (req, res) => {
   try {
     const testId = req.params.id;
-    const educatorId = req.body.educatorId || req.user?.id;
+    const educatorId = req.user.userid; // From auth middleware (JWT payload uses 'userid')
 
     // Check if test exists and belongs to the educator
     const existingTest = await LiveTest.findById(testId);

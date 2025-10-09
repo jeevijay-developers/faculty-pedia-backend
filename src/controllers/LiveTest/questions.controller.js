@@ -151,7 +151,7 @@ exports.getQuestionsByEducator = async (req, res) => {
 exports.updateQuestion = async (req, res) => {
   try {
     const questionId = req.params.id;
-    const educatorId = req.user.id;
+    const educatorId = req.user.userid; // From auth middleware (JWT payload uses 'userid')
 
     // Check if question exists and belongs to the educator
     const existingQuestion = await question.findById(questionId);
@@ -215,7 +215,7 @@ exports.updateQuestion = async (req, res) => {
 exports.deleteQuestion = async (req, res) => {
   try {
     const questionId = req.params.id;
-    const educatorId = req.user.id;
+    const educatorId = req.user.userid; // From auth middleware (JWT payload uses 'userid')
 
     // Check if question exists and belongs to the educator
     const existingQuestion = await question.findById(questionId);
