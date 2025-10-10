@@ -18,6 +18,7 @@ const RESULT_ROUTES = require("./routes/result.routes");
 const SUBSCRIBE_ROUTES = require("./routes/SubsRoute/Subs.route");
 const STUDENT_ROUTES = require("./routes/student.routes");
 const UPDATE_EDUCATOR_ROUTES = require("./routes/educatorUpdate.routes");
+const IMAGE_ROUTES = require("./routes/images.routes");
 
 const { connectDB } = require("./helpers/connectDB");
 require("dotenv").config();
@@ -61,6 +62,7 @@ APP.use("/api/subscribe", SUBSCRIBE_ROUTES);
 APP.use("/api/test-series", TEST_SERIES_ROUTES);
 APP.use("/api/test", TEST_ROUTES);
 APP.use("/api/students", STUDENT_ROUTES);
+APP.use("/api/images", IMAGE_ROUTES);
 //? env imports
 const PORT = process.env.PORT;
 

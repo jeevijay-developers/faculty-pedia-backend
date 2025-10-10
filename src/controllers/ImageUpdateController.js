@@ -1,3 +1,4 @@
+const { uploadToCloudinary } = require("../helpers/cloudinary");
 const Educator = require("../models/Educator");
 const LiveCourse = require("../models/LiveCourse");
 const LiveTest = require("../models/LiveTest");
@@ -16,7 +17,7 @@ const targetModels = {
   WEBINAR: Webinar,
 };
 
-module.updateImage = async (req, res) => {
+exports.updateImage = async (req, res) => {
   try {
     // Controller logic to update an image goes here
     const { id, target, image } = req.body;
@@ -42,6 +43,28 @@ module.updateImage = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating image:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.uploadImage = async (req, res) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ message: "No image file uploaded" });
+    }
+
+    uploadToCloudinary(req.file.buffer)
+      .then((result) => {
+        return res.status(200).json({ imageUrl: result });
+      })
+      .catch((error) => {
+        console.error("Error uploading to Cloudinary:", error);
+        return res.status(500).json({ message: "Cloudinary upload failed" });
+      });
+
+    // res.status(200).json({ imageUrl: req.file.path });
+  } catch (error) {
+    console.error("Error uploading image:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

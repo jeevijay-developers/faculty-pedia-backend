@@ -7,11 +7,6 @@ const oneOnePPHSchema = new mongoose.Schema(
       ref: "Educator",
       required: true,
     },
-    student: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
-      required: true,
-    },
     subject: {
       type: String,
       required: true,
@@ -22,14 +17,14 @@ const oneOnePPHSchema = new mongoose.Schema(
       enum: ["IIT-JEE", "NEET", "CBSE"],
       required: true,
     },
+    fees: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     preferredDate: {
       type: Date,
       required: true,
-    },
-    preferredTime: {
-      type: String,
-      required: true,
-      trim: true,
     },
     duration: {
       type: Number, // in hours
@@ -48,7 +43,7 @@ const oneOnePPHSchema = new mongoose.Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-    }
+    },
   },
   {
     timestamps: true,
@@ -56,4 +51,3 @@ const oneOnePPHSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("OneOnePPH", oneOnePPHSchema);
-
