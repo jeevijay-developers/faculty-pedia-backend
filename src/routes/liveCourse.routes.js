@@ -18,6 +18,8 @@ const {
   getAvailableOtoCoursesBySubject,
   getCourseForStudent,
   enrollStudentInCourse,
+  updateCourse,
+  deleteCourse,
 } = require("../controllers/LiveCourseController");
 const { param } = require("express-validator");
 const { uploadSingleImage } = require("../middlewares/multer.config");
@@ -88,6 +90,57 @@ router.post(
   ],
   validateRequests,
   createCourse
+);
+
+// UPDATE COURSE - Authentication required
+router.put(
+  "/update/:id",
+  requireAuth,
+  uploadSingleImage,
+  parseCoursePayload,
+  [
+    // Validate course ID in params
+    mongoIDChainParams("id"),
+
+    // All fields are optional for update
+    enumChain("specialization", ["IIT-JEE", "NEET", "CBSE"]).optional(),
+    enumChain("courseClass", [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+    ]).optional(),
+    stringChain("subject", 2, 20).optional(),
+    stringChain("title", 3, 100).optional(),
+    stringChain("description.shortDesc", 10, 200).optional(),
+    stringChain("description.longDesc", 20, 1000).optional(),
+    enumChain("courseType", ["OTA", "OTO"]).optional(),
+    dateFieldChain("startDate").optional(),
+    dateFieldChain("endDate").optional(),
+    numberChain("seatLimit", 1).optional(),
+    numberChain("classDuration", 1).optional(),
+    numberChain("fees", 0).optional(),
+    numberChain("validity", 1).optional(),
+  ],
+  validateRequests,
+  updateCourse
+);
+
+// DELETE COURSE - Authentication required
+router.delete(
+  "/delete/:id",
+  requireAuth,
+  [mongoIDChainParams("id")],
+  validateRequests,
+  deleteCourse
 );
 
 // BROWSING ROUTES - No authentication required

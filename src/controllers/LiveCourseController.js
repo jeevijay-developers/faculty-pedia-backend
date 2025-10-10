@@ -401,3 +401,170 @@ exports.getCourseForStudent = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+// UPDATE COURSE
+exports.updateCourse = async (req, res) => {
+  try {
+    const courseId = req.params.id;
+    const userId = req.user.userid; // From auth middleware (JWT payload uses 'userid')
+
+    // Check if course exists
+    const course = await LiveCourse.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found." });
+    }
+
+    // Check if the user is the educator who created this course
+    if (course.educatorId.toString() !== userId) {
+      return res.status(403).json({ 
+        message: "Unauthorized. You can only update your own courses." 
+      });
+    }
+
+    // Extract update data from request body
+    const {
+      specialization,
+      courseClass,
+      subject,
+      title,
+      description,
+      courseType,
+      startDate,
+      endDate,
+      seatLimit,
+      classDuration,
+      fees,
+      validity,
+      videos,
+    } = req.body;
+
+    // Handle image upload if new image is provided
+    let uploadedImage = course.image; // Keep existing image by default
+
+    if (req.file) {
+      try {
+        uploadedImage = await uploadToCloudinary(req.file.buffer);
+      } catch (error) {
+        console.error("Error uploading course image:", error);
+        return res.status(500).json({
+          message: "Failed to upload course image",
+        });
+      }
+    }
+
+    // Prepare update object - only include fields that are provided
+    const updateData = {};
+
+    if (specialization !== undefined) updateData.specialization = specialization;
+    if (courseClass !== undefined) updateData.courseClass = courseClass;
+    if (subject !== undefined) updateData.subject = subject;
+    if (title !== undefined) updateData.title = title;
+    if (courseType !== undefined) updateData.courseType = courseType;
+    if (startDate !== undefined) updateData.startDate = new Date(startDate);
+    if (endDate !== undefined) updateData.endDate = new Date(endDate);
+    if (seatLimit !== undefined) updateData.seatLimit = Number(seatLimit);
+    if (classDuration !== undefined) updateData.classDuration = Number(classDuration);
+    if (fees !== undefined) updateData.fees = Number(fees);
+    if (validity !== undefined) updateData.validity = Number(validity);
+
+    // Handle description update
+    if (description) {
+      updateData.description = {
+        shortDesc: description.shortDesc || course.description.shortDesc,
+        longDesc: description.longDesc || course.description.longDesc,
+      };
+    }
+
+    // Handle videos update
+    if (videos) {
+      updateData.videos = {
+        intro: videos.intro || course.videos?.intro || "",
+        descriptionVideo: videos.descriptionVideo || course.videos?.descriptionVideo || "",
+        lessons: Array.isArray(videos.lessons) ? videos.lessons : course.videos?.lessons || [],
+      };
+    }
+
+    // Update image if new one was uploaded
+    if (uploadedImage && uploadedImage !== course.image) {
+      updateData.image = uploadedImage;
+    }
+
+    // Update the course
+    const updatedCourse = await LiveCourse.findByIdAndUpdate(
+      courseId,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    ).populate("educatorId", "name email");
+
+    return res.status(200).json({
+      message: "Course updated successfully",
+      course: updatedCourse,
+    });
+  } catch (error) {
+    console.error("Error updating course:", error);
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid course ID provided" });
+    }
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ 
+        message: "Validation error", 
+        errors: error.errors 
+      });
+    }
+    return res.status(500).json({ 
+      message: "Internal server error",
+      error: error.message 
+    });
+  }
+};
+
+// DELETE COURSE
+exports.deleteCourse = async (req, res) => {
+  try {
+    const courseId = req.params.id;
+    const userId = req.user.userid; // From auth middleware (JWT payload uses 'userid')
+
+    // Check if course exists
+    const course = await LiveCourse.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found." });
+    }
+
+    // Check if the user is the educator who created this course
+    if (course.educatorId.toString() !== userId) {
+      return res.status(403).json({ 
+        message: "Unauthorized. You can only delete your own courses." 
+      });
+    }
+
+    // Check if there are enrolled students
+    if (course.purchases && course.purchases.length > 0) {
+      return res.status(400).json({ 
+        message: "Cannot delete course with enrolled students. Please contact support." 
+      });
+    }
+
+    // Remove course from educator's courses array
+    await Educator.findByIdAndUpdate(
+      course.educatorId,
+      { $pull: { courses: courseId } }
+    );
+
+    // Delete the course
+    await LiveCourse.findByIdAndDelete(courseId);
+
+    return res.status(200).json({
+      message: "Course deleted successfully",
+      courseId: courseId,
+    });
+  } catch (error) {
+    console.error("Error deleting course:", error);
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid course ID provided" });
+    }
+    return res.status(500).json({ 
+      message: "Internal server error",
+      error: error.message 
+    });
+  }
+};
