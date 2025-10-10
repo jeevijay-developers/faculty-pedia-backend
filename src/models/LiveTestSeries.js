@@ -94,7 +94,7 @@ const testSeriesSchema = new mongoose.Schema({
   },
   courseId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Course",
+    ref: "LiveCourse",
   },
   slug: {
     type: String,

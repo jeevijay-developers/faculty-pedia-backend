@@ -1,6 +1,7 @@
 const LiveTestSeries = require("../../models/LiveTestSeries");
 const Educator = require("../../models/Educator");
 const LiveTest = require("../../models/LiveTest");
+const Course = require("../../models/LiveCourse");
 const { uploadToCloudinary } = require("../../helpers/cloudinary");
 
 // Create Test Series
@@ -205,12 +206,6 @@ exports.updateTestSeries = async (req, res) => {
       return res.status(404).json({ message: "Test series not found" });
     }
 
-    if (existingTestSeries.educatorId.toString() !== educatorId) {
-      return res.status(403).json({
-        message: "You can only update your own test series",
-      });
-    }
-
     // Validate dates if both are provided
     const { startDate, endDate } = req.body;
     if (startDate && endDate && new Date(endDate) <= new Date(startDate)) {
@@ -225,7 +220,6 @@ exports.updateTestSeries = async (req, res) => {
       { new: true, runValidators: true }
     )
       .populate("educatorId", "firstName lastName email specialization")
-      .populate("courseId", "title description")
       .populate("liveTests", "title startDate duration");
 
     res.status(200).json({
