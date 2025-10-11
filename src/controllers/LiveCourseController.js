@@ -152,7 +152,17 @@ exports.getCoursesBySpecialization = async (req, res) => {
       // Only fetch courses that are still valid
       $expr: {
         $gte: [
-          { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+          { 
+            $add: [
+              "$createdAt", 
+              { 
+                $multiply: [
+                  { $toDouble: { $ifNull: ["$validity", 180] } }, // Convert validity to number, default to 180
+                  24 * 60 * 60 * 1000
+                ] 
+              }
+            ] 
+          },
           now
         ]
       }
@@ -180,7 +190,17 @@ exports.getCoursesBySubject = async (req, res) => {
       // Only fetch courses that are still valid
       $expr: {
         $gte: [
-          { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+          { 
+            $add: [
+              "$createdAt", 
+              { 
+                $multiply: [
+                  { $toDouble: { $ifNull: ["$validity", 180] } }, // Convert validity to number, default to 180
+                  24 * 60 * 60 * 1000
+                ] 
+              }
+            ] 
+          },
           now
         ]
       }
@@ -207,7 +227,8 @@ exports.getCourseById = async (req, res) => {
 
     // Check if course is still valid
     const now = new Date();
-    const validUntil = new Date(course.createdAt.getTime() + (course.validity * 24 * 60 * 60 * 1000));
+    const validityDays = Number(course.validity) || 180; // Convert to number, default to 180
+    const validUntil = new Date(course.createdAt.getTime() + (validityDays * 24 * 60 * 60 * 1000));
     
     if (now > validUntil) {
       return res.status(410).json({ message: "Course validity has expired" });
@@ -235,7 +256,8 @@ exports.getCourseBySlug = async (req, res) => {
 
     // Check if course is still valid
     const now = new Date();
-    const validUntil = new Date(course.createdAt.getTime() + (course.validity * 24 * 60 * 60 * 1000));
+    const validityDays = Number(course.validity) || 180; // Convert to number, default to 180
+    const validUntil = new Date(course.createdAt.getTime() + (validityDays * 24 * 60 * 60 * 1000));
     
     if (now > validUntil) {
       return res.status(410).json({ message: "Course validity has expired" });
@@ -260,7 +282,17 @@ exports.getAvailableOtoCourses = async (req, res) => {
       // Only fetch courses that are still valid
       $expr: {
         $gte: [
-          { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+          { 
+            $add: [
+              "$createdAt", 
+              { 
+                $multiply: [
+                  { $toDouble: { $ifNull: ["$validity", 180] } }, // Convert validity to number, default to 180
+                  24 * 60 * 60 * 1000
+                ] 
+              }
+            ] 
+          },
           now
         ]
       }
@@ -285,7 +317,17 @@ exports.getAvailableOtoCoursesBySubject = async (req, res) => {
       // Only fetch courses that are still valid
       $expr: {
         $gte: [
-          { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+          { 
+            $add: [
+              "$createdAt", 
+              { 
+                $multiply: [
+                  { $toDouble: { $ifNull: ["$validity", 180] } }, // Convert validity to number, default to 180
+                  24 * 60 * 60 * 1000
+                ] 
+              }
+            ] 
+          },
           now
         ]
       }

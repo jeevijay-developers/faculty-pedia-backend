@@ -129,7 +129,17 @@ exports.getAllTestSeries = async (req, res) => {
     const now = new Date();
     filter.$expr = {
       $gte: [
-        { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+        { 
+          $add: [
+            "$createdAt", 
+            { 
+              $multiply: [
+                { $toDouble: { $ifNull: ["$validity", 180] } }, // Convert validity to number, default to 180
+                24 * 60 * 60 * 1000
+              ] 
+            }
+          ] 
+        },
         now
       ]
     };
@@ -178,7 +188,8 @@ exports.getTestSeriesById = async (req, res) => {
 
     // Check if test series is still valid
     const now = new Date();
-    const validUntil = new Date(testSeries.createdAt.getTime() + (testSeries.validity * 24 * 60 * 60 * 1000));
+    const validityDays = Number(testSeries.validity) || 180; // Convert to number, default to 180
+    const validUntil = new Date(testSeries.createdAt.getTime() + (validityDays * 24 * 60 * 60 * 1000));
     
     if (now > validUntil) {
       return res.status(410).json({ message: "Test series validity has expired" });
@@ -298,7 +309,17 @@ exports.getTestseriesBySpecialization = async (req, res) => {
       // Only fetch test series that are still valid
       $expr: {
         $gte: [
-          { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+          { 
+            $add: [
+              "$createdAt", 
+              { 
+                $multiply: [
+                  { $toDouble: { $ifNull: ["$validity", 180] } }, // Convert validity to number, default to 180
+                  24 * 60 * 60 * 1000
+                ] 
+              }
+            ] 
+          },
           now
         ]
       }
@@ -325,7 +346,17 @@ exports.getTestseriesBySubject = async (req, res) => {
       // Only fetch test series that are still valid
       $expr: {
         $gte: [
-          { $add: ["$createdAt", { $multiply: ["$validity", 24 * 60 * 60 * 1000] }] },
+          { 
+            $add: [
+              "$createdAt", 
+              { 
+                $multiply: [
+                  { $toDouble: { $ifNull: ["$validity", 180] } }, // Convert validity to number, default to 180
+                  24 * 60 * 60 * 1000
+                ] 
+              }
+            ] 
+          },
           now
         ]
       }
@@ -352,7 +383,8 @@ exports.getLiveTestSeriesById = async (req, res) => {
 
     // Check if test series is still valid
     const now = new Date();
-    const validUntil = new Date(testSeries.createdAt.getTime() + (testSeries.validity * 24 * 60 * 60 * 1000));
+    const validityDays = Number(testSeries.validity) || 180; // Convert to number, default to 180
+    const validUntil = new Date(testSeries.createdAt.getTime() + (validityDays * 24 * 60 * 60 * 1000));
     
     if (now > validUntil) {
       return res.status(410).json({ message: "Test series validity has expired" });
@@ -380,7 +412,8 @@ exports.getLiveTestSeriesBySlug = async (req, res) => {
 
     // Check if test series is still valid
     const now = new Date();
-    const validUntil = new Date(testSeries.createdAt.getTime() + (testSeries.validity * 24 * 60 * 60 * 1000));
+    const validityDays = Number(testSeries.validity) || 180; // Convert to number, default to 180
+    const validUntil = new Date(testSeries.createdAt.getTime() + (validityDays * 24 * 60 * 60 * 1000));
     
     if (now > validUntil) {
       return res.status(410).json({ message: "Test series validity has expired" });
