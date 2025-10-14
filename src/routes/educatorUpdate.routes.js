@@ -13,6 +13,7 @@ const {
 const { verifyToken } = require("../middlewares/jwt.config");
 const { uploadProfileImage } = require("../middlewares/multer.config");
 const { validateRequests } = require("../middlewares/validateRequests.config");
+const { body } = require("express-validator");
 const {
   stringChain,
   emailChain,
@@ -32,10 +33,14 @@ router.put(
     mongoIdChainInReqParams("educatorId"),
     stringChain("firstName", 5, 30).optional(),
     stringChain("lastName", 5, 30).optional(),
-    emailChain("email").optional().custom(validateEmail),
-    numberChain("mobileNumber").optional().custom(validateMobileNumber),
+    emailChain("email").optional(),
+    numberChain("mobileNumber").optional(),
     stringChain("bio", 10, 500).optional(),
-    stringChain("introVideoLink", 5, 500).isURL().optional(),
+    body("introVideoLink")
+      .optional({ checkFalsy: true })
+      .trim()
+      .isURL()
+      .withMessage("introVideoLink must be a valid URL"),
   ],
   validateRequests,
   updateNameEmailMobileNumberAndBio
