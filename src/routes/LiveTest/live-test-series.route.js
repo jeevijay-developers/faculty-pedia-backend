@@ -62,7 +62,7 @@ router.get(
 
 // Get test series by ID - for browsing details
 router.get(
-  "/:id",
+  "/by-id/:id",
   optionalAuth,
   [mongoIDChainParams("id")],
   validateRequests,
