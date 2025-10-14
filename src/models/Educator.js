@@ -109,6 +109,7 @@ const educatorSchema = new mongoose.Schema(
     subject: {
       type: String,
       trim: true,
+      lowercase: true,
     },
     courses: [
       {
