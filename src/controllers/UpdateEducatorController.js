@@ -4,8 +4,15 @@ const { uploadToCloudinary } = require("../helpers/cloudinary");
 exports.updateNameEmailMobileNumberAndBio = async (req, res) => {
   try {
     const { educatorId } = req.params;
-    const { firstName, lastName, email, mobileNumber, bio, introVideoLink } =
-      req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      mobileNumber,
+      bio,
+      description,
+      introVideoLink,
+    } = req.body;
     const isEducator = await Educator.findById(educatorId);
     if (!isEducator) {
       return res.status(404).json({ message: "Educator not found" });
@@ -14,6 +21,8 @@ exports.updateNameEmailMobileNumberAndBio = async (req, res) => {
     if (firstName && firstName.trim()) isEducator.firstName = firstName.trim();
     if (lastName && lastName.trim()) isEducator.lastName = lastName.trim();
     if (bio && bio.trim()) isEducator.bio = bio.trim();
+    if (description && description.trim())
+      isEducator.description = description.trim();
     if (introVideoLink) isEducator.introVideoLink = introVideoLink;
     if (email) isEducator.email = email;
     if (mobileNumber) isEducator.mobileNumber = mobileNumber;
@@ -103,18 +112,39 @@ exports.updateSocialLinks = async (req, res) => {
 exports.updateSpecializationAndExperience = async (req, res) => {
   try {
     const { educatorId } = req.params;
-    const { specialization, yearsExperience } = req.body;
+    const { specialization, subject, yearsExperience } = req.body;
     const isEducator = await Educator.findById(educatorId);
     if (!isEducator) {
       return res.status(404).json({ message: "Educator not found" });
     }
-    if (specialization) isEducator.specialization = specialization;
+
+    // Update specialization array if provided
+    if (specialization) {
+      if (Array.isArray(specialization)) {
+        isEducator.specialization = specialization;
+      } else {
+        // If single value provided, convert to array
+        isEducator.specialization = [specialization];
+      }
+    }
+
+    // Update subject array if provided
+    if (subject) {
+      if (Array.isArray(subject)) {
+        isEducator.subject = subject;
+      } else {
+        // If single value provided, convert to array
+        isEducator.subject = [subject];
+      }
+    }
+
     if (yearsExperience !== undefined)
       isEducator.yearsExperience = yearsExperience;
+
     await isEducator.save();
-    res
-      .status(200)
-      .json({ message: "Educator specialization updated successfully" });
+    res.status(200).json({
+      message: "Educator specialization and subjects updated successfully",
+    });
   } catch (error) {
     console.error("Error updating educator specialization:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -139,7 +169,10 @@ exports.updateEducatorImage = async (req, res) => {
 
     try {
       // Upload image to Cloudinary
-      const uploadResult = await uploadToCloudinary(imageFile.buffer, imageFile.originalname);
+      const uploadResult = await uploadToCloudinary(
+        imageFile.buffer,
+        imageFile.originalname
+      );
 
       // Update educator's image
       educator.image = {
@@ -159,6 +192,7 @@ exports.updateEducatorImage = async (req, res) => {
           mobileNumber: educator.mobileNumber,
           image: educator.image,
           bio: educator.bio,
+          description: educator.description,
           specialization: educator.specialization,
           subject: educator.subject,
           rating: educator.rating,

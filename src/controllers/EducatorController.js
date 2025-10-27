@@ -6,12 +6,6 @@ exports.updateEducatorStatus = async (req, res) => {
   try {
     const { id, status } = req.body;
 
-    // if (!id || !status) {
-    //   return res
-    //     .status(400)
-    //     .json({ message: "Invalid educator ID or status." });
-    // }
-
     if (!["active", "inactive"].includes(status)) {
       return res.status(400).json({ message: "Invalid status." });
     }
@@ -34,15 +28,17 @@ exports.updateEducatorStatus = async (req, res) => {
 exports.getAllEducators = async (req, res) => {
   try {
     const { page = 1, limit = 10, subject, specialization } = req.query;
-    
+
     let filter = { status: "active" };
-    
-    // Add filters if provided
+
+    // Add filters if provided - now handling arrays
     if (subject) {
-      filter.subject = { $regex: subject, $options: 'i' };
+      // Check if subject array contains the specified subject (case-insensitive)
+      filter.subject = { $in: [new RegExp(subject, "i")] };
     }
     if (specialization) {
-      filter.specialization = { $regex: specialization, $options: 'i' };
+      // Check if specialization array contains the specified specialization
+      filter.specialization = { $in: [specialization] };
     }
 
     const educators = await Educator.find(filter)
@@ -57,7 +53,7 @@ exports.getAllEducators = async (req, res) => {
       educators,
       totalPages: Math.ceil(total / limit),
       currentPage: page,
-      total
+      total,
     });
   } catch (error) {
     console.error("Error fetching all educators:", error);
@@ -70,9 +66,9 @@ exports.createSampleEducators = async (req, res) => {
     // Check if educators already exist
     const existingCount = await Educator.countDocuments();
     if (existingCount > 0) {
-      return res.status(200).json({ 
+      return res.status(200).json({
         message: "Sample educators already exist",
-        count: existingCount 
+        count: existingCount,
       });
     }
 
@@ -85,8 +81,8 @@ exports.createSampleEducators = async (req, res) => {
         email: "suresh.nair@example.com",
         slug: "suresh-nair-physics",
         bio: "Physics educator specializing in mechanics and thermodynamics for NEET students.",
-        specialization: "NEET",
-        subject: "Physics",
+        specialization: ["NEET"],
+        subject: ["physics"],
         rating: 4.5,
         status: "active",
       },
@@ -98,8 +94,8 @@ exports.createSampleEducators = async (req, res) => {
         email: "meera.sharma@example.com",
         slug: "meera-sharma-math",
         bio: "Expert in algebra, calculus, and IIT-JEE coaching.",
-        specialization: "IIT-JEE",
-        subject: "Math",
+        specialization: ["IIT-JEE"],
+        subject: ["mathematics"],
         rating: 4.8,
         status: "active",
       },
@@ -111,8 +107,8 @@ exports.createSampleEducators = async (req, res) => {
         email: "anita.verma@example.com",
         slug: "anita-verma-chemistry",
         bio: "Specialist in organic and inorganic chemistry for JEE/NEET.",
-        specialization: "NEET",
-        subject: "Chemistry",
+        specialization: ["NEET", "IIT-JEE"],
+        subject: ["chemistry"],
         rating: 4.6,
         status: "active",
       },
@@ -124,19 +120,19 @@ exports.createSampleEducators = async (req, res) => {
         email: "ankit.verma@example.com",
         slug: "ankit-verma-biology",
         bio: "Specialist in Biology for NEET preparation.",
-        specialization: "NEET",
-        subject: "Biology",
+        specialization: ["NEET", "CBSE"],
+        subject: ["biology"],
         rating: 4.6,
         status: "active",
       },
     ];
 
     const created = await Educator.insertMany(sampleEducators);
-    
+
     return res.status(201).json({
       message: "Sample educators created successfully",
       count: created.length,
-      educators: created
+      educators: created,
     });
   } catch (error) {
     console.error("Error creating sample educators:", error);
@@ -151,8 +147,9 @@ exports.getEducatorsBySpecialization = async (req, res) => {
       return res.status(400).json({ message: "Specialization is required." });
     }
 
+    // Find educators where specialization array contains the specified value
     const educators = await Educator.find({
-      specialization: specialization,
+      specialization: { $in: [specialization] },
       status: "active",
     }).populate("followers");
     return res.status(200).json({ educators });
@@ -169,8 +166,10 @@ exports.getEducatorsBySubject = async (req, res) => {
     if (!subject) {
       return res.status(400).json({ message: "Subject is required." });
     }
+
+    // Find educators where subject array contains the specified value (case-insensitive)
     const educators = await Educator.find({
-      subject: subject,
+      subject: { $regex: new RegExp(`^${subject}$`, "i") },
       status: "active",
     }).populate("followers");
     return res.status(200).json({ educators });
@@ -196,6 +195,7 @@ exports.getEducatorById = async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
 exports.getEducatorBySlug = async (req, res) => {
   try {
     const { slug } = req.params;

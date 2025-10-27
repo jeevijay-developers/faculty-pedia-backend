@@ -21,7 +21,8 @@ const {
   arrayFieldChain,
   dateFieldChain,
   mongoIdChainInReqParams,
-  enumChain,
+  arrayOrStringEnumChain,
+  arrayOrStringChain,
 } = require("../middlewares/validationChains");
 
 const router = require("express").Router();
@@ -36,6 +37,7 @@ router.put(
     emailChain("email").optional(),
     numberChain("mobileNumber").optional(),
     stringChain("bio", 10, 500).optional(),
+    stringChain("description", 20, 1000).optional(),
     body("introVideoLink")
       .optional({ checkFalsy: true })
       .trim()
@@ -103,7 +105,7 @@ router.put(
   verifyToken,
   [
     mongoIdChainInReqParams("educatorId"),
-    enumChain("specialization", [
+    arrayOrStringEnumChain("specialization", [
       "Physics",
       "Chemistry",
       "Biology",
@@ -112,7 +114,8 @@ router.put(
       "NEET",
       "CBSE",
     ]),
-    numberChain("yearsExperience", 0),
+    arrayOrStringChain("subject", 2),
+    numberChain("yearsExperience", 0).optional(),
   ],
   validateRequests,
   updateSpecializationAndExperience

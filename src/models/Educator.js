@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-
 const educatorSchema = new mongoose.Schema(
   {
     firstName: {
@@ -33,8 +32,13 @@ const educatorSchema = new mongoose.Schema(
       public_id: String,
       url: {
         type: String,
-        default: "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+        default:
+          "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
       },
+    },
+    description: {
+      type: String,
+      trim: true,
     },
     slug: {
       type: String,
@@ -92,25 +96,32 @@ const educatorSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    specialization: {
-      type: String,
-      required: true,
-      trim: true,
-      enum: [
-        "IIT-JEE",
-        "NEET",
-        "CBSE",
-      ],
-    },
+    specialization: [
+      {
+        type: String,
+        required: true,
+        trim: true,
+        enum: ["IIT-JEE", "NEET", "CBSE"],
+      },
+    ],
     role: {
       type: String,
       default: "educator",
     },
-    subject: {
-      type: String,
-      trim: true,
-      lowercase: true,
-    },
+    subject: [
+      {
+        type: String,
+        trim: true,
+        lowercase: true,
+      },
+    ],
+    class: [
+      {
+        type: String,
+        trim: true,
+        lowercase: true,
+      },
+    ],
     courses: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -133,17 +144,54 @@ const educatorSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "LiveTest",
-      }
+      },
     ],
     questions: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Question",
-      }
+      },
     ],
     yearsExperience: {
       type: Number,
       default: 0,
+    },
+    revenue: {
+      bankDetails: {
+        accountHolderName: {
+          type: String,
+          default: "",
+        },
+        accountNumber: {
+          type: String,
+          default: "",
+        },
+        ifscCode: {
+          type: String,
+          uppercase: true,
+          default: "",
+        },
+        bankName: {
+          type: String,
+          default: "",
+        },
+      },
+      totalIncome: {
+        type: Number,
+        default: 0,
+      },
+      lastMonthIncome: {
+        type: Number,
+        default: 0,
+      },
+      totalAmountSettled: {
+        type: Number,
+        default: 0,
+      },
+      totalPendingAmount: {
+        type: Number,
+        default: 0,
+      },
     },
   },
   {
@@ -157,11 +205,16 @@ educatorSchema.pre("save", async function (next) {
   }
   next();
 });
+
 educatorSchema.pre("validate", async function (next) {
   if (!this.slug) {
-    let baseSlug = `${this.firstName}-${this.lastName}`.toLowerCase().replace(/\s+/g, '-');
+    let baseSlug = `${this.firstName}-${this.lastName}`
+      .toLowerCase()
+      .replace(/\s+/g, "-");
     // If _id exists (on update), use it; otherwise, generate a random string
-    let uniquePart = this._id ? this._id.toString().slice(-6) : Math.random().toString(36).substring(2, 8);
+    let uniquePart = this._id
+      ? this._id.toString().slice(-6)
+      : Math.random().toString(36).substring(2, 8);
     this.slug = `${baseSlug}-${uniquePart}`;
   }
   next();

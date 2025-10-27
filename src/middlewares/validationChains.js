@@ -114,6 +114,58 @@ const mongoIdChainInReqParams = (paramName) => {
     .withMessage(`${paramName} must be a valid MongoDB ObjectId`);
 };
 
+const arrayOrStringEnumChain = (fieldName, allowedValues) => {
+  return body(fieldName)
+    .optional()
+    .custom((value) => {
+      if (Array.isArray(value)) {
+        if (value.length === 0) {
+          throw new Error(`${fieldName} array cannot be empty`);
+        }
+        for (const item of value) {
+          if (!allowedValues.includes(item)) {
+            throw new Error(`Invalid ${fieldName} value: ${item}`);
+          }
+        }
+        return true;
+      } else if (typeof value === "string") {
+        if (!allowedValues.includes(value)) {
+          throw new Error(`Invalid ${fieldName} value: ${value}`);
+        }
+        return true;
+      }
+      throw new Error(`${fieldName} must be a string or array of strings`);
+    });
+};
+
+const arrayOrStringChain = (fieldName, minLength = 2) => {
+  return body(fieldName)
+    .optional()
+    .custom((value) => {
+      if (Array.isArray(value)) {
+        if (value.length === 0) {
+          throw new Error(`${fieldName} array cannot be empty`);
+        }
+        for (const item of value) {
+          if (typeof item !== "string" || item.trim().length < minLength) {
+            throw new Error(
+              `Each ${fieldName} must be at least ${minLength} characters`
+            );
+          }
+        }
+        return true;
+      } else if (typeof value === "string") {
+        if (value.trim().length < minLength) {
+          throw new Error(
+            `${fieldName} must be at least ${minLength} characters`
+          );
+        }
+        return true;
+      }
+      throw new Error(`${fieldName} must be a string or array of strings`);
+    });
+};
+
 module.exports = {
   emailChain,
   mobileChain,
@@ -129,4 +181,6 @@ module.exports = {
   mongoIDChainParams,
   simpleArrayChain,
   mongoIdChainInReqParams,
+  arrayOrStringEnumChain,
+  arrayOrStringChain,
 };
